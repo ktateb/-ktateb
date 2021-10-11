@@ -1,5 +1,8 @@
+using System.Collections.Generic;
 using DAL.Entities.Common;
+using DAL.Entities.Courses;
 using DAL.Entities.Identity;
+using DAL.Entities.StudentFavoriteCourses;
 
 namespace DAL.Entities.Students
 {
@@ -7,7 +10,7 @@ namespace DAL.Entities.Students
     {
         public virtual User User { get; set; }
         public string UserId { get; set; }
-        // MyCourse
-        // My Favorite Course
+        public virtual ICollection<Course> Courses { get; set; }
+        public virtual ICollection<StudentFavoriteCourse> FavorateCourses { get; set; }
     }
 }

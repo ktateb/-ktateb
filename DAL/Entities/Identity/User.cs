@@ -1,4 +1,5 @@
 using DAL.Entities.Comments;
+using DAL.Entities.Countries;
 using DAL.Entities.Messages;
 using DAL.Entities.Ratings;
 using DAL.Entities.Reports;
@@ -14,13 +15,14 @@ namespace DAL.Entities.Identity
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime Birthday { get; set; }
-        public string Country { get; set; }
+        public Country Country { get; set; }
+        public int CountryId { get; set; }
         public string PictureUrl { get; set; }
         public DateTime StartRegisterDate { get; set; }
         public virtual ICollection<Message> UserSenders { get; set; }
         public virtual ICollection<Message> UserRecivers { get; set; }
-        public virtual ICollection<ReportUser> UserSendReportToUsers { get; set; }
-        public virtual ICollection<ReportUser> UserReciveReportFromUsers { get; set; }
+        public virtual ICollection<ReportUser> UsersSendReportToUser { get; set; }
+        public virtual ICollection<ReportUser> UsersReciveReportFromUser { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<SubComment> SubComments { get; set; }
 

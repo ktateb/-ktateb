@@ -1,14 +1,12 @@
-using System;
-
 using DAL.Entities.Common;
 using DAL.Entities.Courses;
 using DAL.Entities.Students;
-
-namespace DAL.Entities.StudentCourses
+using System;
+namespace DAL.Entities.StudentFavoriteCourses
 {
-    public class StudentCourse : BaseEntity
+    public class StudentFavoriteCourse : BaseEntity
     {
-        public DateTime RegistDate { get; set; }
+        public DateTime AddedDate { get; set; }
         public virtual Student Student { get; set; }
         public int StudentId { get; set; }
         public virtual Course Course { get; set; }

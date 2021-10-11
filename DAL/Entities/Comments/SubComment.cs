@@ -10,6 +10,7 @@ namespace DAL.Entities.Comments
     {
         public string Text { get; set; }
         public DateTime DateComment { get; set; }
+        public bool IsUpdated { get; set; }
         public virtual Comment Comment { get; set; }
         public int CommentId { get; set; }
         public virtual User User { get; set; }
