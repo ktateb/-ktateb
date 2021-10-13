@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DAL.DataContext;
 using DAL.Entities.Identity;
@@ -10,13 +11,15 @@ namespace DAL.Repositories
     public class IdentityRepository : IIdentityRepository
     {
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly StoreContext _dbContext;
-        public IdentityRepository(StoreContext dbContext, UserManager<User> userManager, RoleManager<Role> roleManager)
+        public IdentityRepository(StoreContext dbContext, UserManager<User> userManager, SignInManager<User> signInManager, RoleManager<Role> roleManager)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _roleManager = roleManager;
+            _signInManager = signInManager;
         }
 
         public async Task<bool> CreateUserAsync(User inputUser, string password)
@@ -73,6 +76,9 @@ namespace DAL.Repositories
         public async Task<List<IdentityRole>> GetRolesAsync() =>
             await _dbContext.Roles.ToListAsync();
 
+        public async Task<User> GetUserByEmailAsync(string email) =>
+            await _userManager.FindByEmailAsync(email);
+
         public async Task<bool> CreateRoleAsync(Role inputRole)
         {
             var dbRecord = await _roleManager.FindByNameAsync(inputRole.Name);
@@ -108,15 +114,35 @@ namespace DAL.Repositories
             await _roleManager.DeleteAsync(dbRecord);
             return true;
         }
+
+        public async Task<bool> LoginUser(User user, string password)
+        {
+            var result = await _signInManager.CheckPasswordSignInAsync(user, password, false);
+            return result.Succeeded;
+        }
+        public async Task<List<string>> GetRolesByUserIdAsync(string id)
+        {
+            List<string> result = new List<string>();
+            var rolesName = await _dbContext.UserRoles.Where(x => x.UserId == id).ToListAsync();
+            foreach (var item in rolesName)
+            {
+                var role = await _dbContext.Roles.Where(x => x.Id == item.RoleId).FirstOrDefaultAsync();
+                result.Add(role.Name);
+            }
+            return result;
+        }
+
     }
     public interface IIdentityRepository
     {
+        public Task<bool> LoginUser(User user, string password);
         public Task<bool> CreateUserAsync(User inputUser, string password);
         public Task<bool> RemoveUserByNameAsync(string name);
         public Task<bool> RemoveUserByIdAsync(string id);
         public Task<bool> UpdateUserAsync(User inputUser);
         public Task<User> GetUserByIdAsync(string id);
         public Task<User> GetUserByNameAsync(string name);
+        public Task<User> GetUserByEmailAsync(string email);
         public Task<List<User>> GetUsersAsync();
         public Task<Role> GetRoleByIdAsync(string id);
         public Task<Role> GetRoleByNameAsync(string name);
@@ -125,5 +151,6 @@ namespace DAL.Repositories
         public Task<bool> UpdateRoleAsync(Role inputRole);
         public Task<bool> DeleteRoleByIdAsync(string id);
         public Task<bool> DeleteRoleByNameAsync(string id);
+        public Task<List<string>> GetRolesByUserIdAsync(string id);
     }
 }

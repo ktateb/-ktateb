@@ -1,10 +1,11 @@
 using System;
+using DAL.Entities.Common;
 using DAL.Entities.Identity;
 using DAL.Entities.Messages;
 
 namespace DAL.Entities.Reports
 {
-    public class ReportMessage
+    public class ReportMessage : BaseEntity
     {
         public string Text { get; set; }
         public DateTime DateReport { get; set; }

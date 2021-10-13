@@ -25,6 +25,7 @@ namespace DAL.Entities.Identity
         public virtual ICollection<ReportUser> UsersReciveReportFromUser { get; set; }
         public virtual ICollection<Comment> Comments { get; set; }
         public virtual ICollection<SubComment> SubComments { get; set; }
+        public virtual ICollection<Role> Roles { get; set; }
 
         [NotMapped]
         public string FullName { get => FirstName + " " + LastName; }

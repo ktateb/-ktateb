@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using DAL.Entities.Comments;
+using DAL.Entities.Common;
 using DAL.Entities.Identity;
 
 namespace DAL.Entities.Reports
 {
-    public class ReportComment
+    public class ReportComment : BaseEntity
     {
         public string Text { get; set; }
         public DateTime DateReport { get; set; }
