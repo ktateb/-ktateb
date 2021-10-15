@@ -16,13 +16,19 @@ using System.IO;
 using AutoMapper;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.EntityFrameworkCore;
-using API.Extensions;
 using Services;
 using DAL.Repositories;
 using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Services.Profiles;
+using DAL.Entities.Countries;
+using DAL.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+using API.Extensions;
+using FluentValidation;
+using Model.User.Inputs;
+using FluentValidation.AspNetCore;
 
 namespace API
 {
@@ -38,20 +44,21 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            string mySqlConnectionStr = _configuration.GetConnectionString("DefaultConnection");
-            var serverVersion = new MySqlServerVersion(new Version(8, 0, 26));
-            services.AddDbContext<StoreContext>(
-            dbContextOptions => dbContextOptions
-                .UseMySql(mySqlConnectionStr, serverVersion)
-                .LogTo(Console.WriteLine, LogLevel.Information));
-
             services.AddAutoMapper(typeof(UserProfile));
             services.AddControllers();
-            services.AddScoped(typeof(GenericRepository<>));
-            services.AddScoped<IdentityRepository>();
-            services.AddScoped<IAccountService,AccountService>();
+            services.AddDbContext<StoreContext>(x =>
+                x.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentityServices();
+            services.AddFluentValidation(fv =>
+                fv.RegisterValidatorsFromAssemblyContaining<UserRegisterInputValidator>());
+            services.AddFluentValidation(fv =>
+                            fv.RegisterValidatorsFromAssemblyContaining<UserLoginInputValidator>());
+
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IIdentityRepository, IdentityRepository>();
+            services.AddScoped(typeof(IGenericRepository<Country>), typeof(GenericRepository<Country>));
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddIdentityServices(_configuration);
 
             services.AddSwaggerGen(opt =>
             {
@@ -88,11 +95,13 @@ namespace API
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseSwagger();
             app.UseSwaggerUI(config =>
             {

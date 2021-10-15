@@ -122,7 +122,7 @@ namespace DAL.Repositories
         }
         public async Task<List<string>> GetRolesByUserIdAsync(string id)
         {
-            List<string> result = new List<string>();
+            List<string> result = new();
             var rolesName = await _dbContext.UserRoles.Where(x => x.UserId == id).ToListAsync();
             foreach (var item in rolesName)
             {
