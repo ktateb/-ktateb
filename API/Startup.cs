@@ -31,6 +31,7 @@ using Model.User.Inputs;
 using FluentValidation.AspNetCore;
 using DAL.Entities.Categories;
 using DAL.Entities.Courses;
+using System.Reflection;
 
 namespace API
 {
@@ -60,11 +61,11 @@ namespace API
 
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IIdentityRepository, IdentityRepository>();
-            services.AddScoped(typeof(IGenericRepository<Country>), typeof(GenericRepository<Country>));
-            services.AddScoped(typeof(IGenericRepository<Category>), typeof(GenericRepository<Category>)); 
-
-            services.AddScoped(typeof(IGenericRepository<Course>), typeof(GenericRepository<Course>)); 
+            services.AddScoped(typeof(IGenericRepository<Category>), typeof(GenericRepository<Category>));
+            services.AddScoped(typeof(IGenericRepository<Course>), typeof(GenericRepository<Course>));
+            services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<ICategoryServices, CategoryServices>();
+
             services.AddScoped<ITokenService, TokenService>();
             services.AddIdentityServices(_configuration);
 
@@ -89,10 +90,11 @@ namespace API
                 opt.AddSecurityDefinition("Bearer", securitySchema);
                 var securityRequirement = new OpenApiSecurityRequirement
                 {
-                    {securitySchema , new [] {"Bearer"}}
+                        {securitySchema , new [] {"Bearer"}}
                 };
                 opt.AddSecurityRequirement(securityRequirement);
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

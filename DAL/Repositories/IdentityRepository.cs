@@ -153,6 +153,13 @@ namespace DAL.Repositories
         public async Task<bool> CheckPassword(User user, string Password) =>
             await _userManager.CheckPasswordAsync(user, Password);
 
+        public async Task<bool> DeleteRoleInUser(User user, string role)
+        {
+            await _userManager.RemoveFromRoleAsync(user, role);
+            return true;
+        }
+
+
     }
     public interface IIdentityRepository
     {
@@ -171,11 +178,12 @@ namespace DAL.Repositories
         public Task<bool> CreateRoleAsync(Role inputRole);
         public Task<bool> UpdateRoleAsync(Role inputRole);
         public Task<bool> DeleteRoleByIdAsync(string id);
-        public Task<bool> DeleteRoleByNameAsync(string id);
+        public Task<bool> DeleteRoleByNameAsync(string name);
         public Task<List<string>> GetRolesByUserIdAsync(string id);
         public Task<bool> AddRoleToUserAsync(User user, string role);
         public Task<User> GetUserByUserClaim(ClaimsPrincipal userClaim);
         public Task<bool> ChangePasssword(User user, string currentPassword, string newPassword);
         public Task<bool> CheckPassword(User user, string Password);
+        public Task<bool> DeleteRoleInUser(User user, string role);
     }
 }

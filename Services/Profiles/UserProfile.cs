@@ -10,6 +10,8 @@ namespace Services.Profiles
     {
         public UserProfile()
         {
+            CreateMap<User, UserSeedOutput>();
+            
             CreateMap<User, UsersOutput>()
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.FullName))
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles.Select(x => x.Name).ToList()));

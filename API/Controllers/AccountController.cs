@@ -27,30 +27,6 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("User")]
-        public async Task<ActionResult<UsersOutput>> GetUser(string userName)
-        {
-            var dbRecord = await _accountService.GetUserByNameAsync(userName);
-            if (dbRecord == null)
-                return NotFound("User not found");
-            var data = _mapper.Map<User, UsersOutput>(dbRecord);
-            return Ok(data);
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<UsersOutput>> GetUserByEmail(string email)
-        {
-            var dbRecord = await _accountService.GetUserByEmailAsync(email);
-            if (dbRecord == null)
-                return NotFound("User not found");
-            var data = _mapper.Map<User, UsersOutput>(dbRecord);
-            return Ok(data);
-        }
-
-        [HttpGet("Users")]
-        public async Task<ActionResult<List<UsersOutput>>> GetUsers() =>
-            Ok(_mapper.Map<List<User>, List<UsersOutput>>(await _accountService.GetUsers()));
-
         [Authorize]
         [HttpPost("Update")]
         public async Task<ActionResult> UpdateUser(UserUpdate input)
@@ -88,7 +64,7 @@ namespace API.Controllers
                 return NotFound("Username or password is wrong");
 
             var data = _mapper.Map<User, UserOutput>(dbRecord);
-            data.Token = _tokenService.CreateToken(dbRecord);
+            data.Token = await _tokenService.CreateToken(dbRecord);
             return Ok(data);
         }
 
@@ -97,16 +73,16 @@ namespace API.Controllers
         {
             var dbRecord = await _accountService.GetUserByNameAsync(input.UserName);
             if (dbRecord != null)
-                return BadRequest("This username is not used by another user");
+                return BadRequest("This username is used by another user");
             dbRecord = await _accountService.GetUserByEmailAsync(input.Email);
             if (dbRecord != null)
-                return BadRequest("This email is not used by another user");
+                return BadRequest("This email is used by another user");
             var result = await _accountService.RegisterUser(input);
             if (!result)
                 return BadRequest("Something wrong when you regester");
             dbRecord = await _accountService.GetUserByNameAsync(input.UserName);
             var data = _mapper.Map<User, UserOutput>(dbRecord);
-            data.Token = _tokenService.CreateToken(dbRecord);
+            data.Token = await _tokenService.CreateToken(dbRecord);
             return Ok(data);
         }
 
@@ -120,12 +96,13 @@ namespace API.Controllers
             var file = input.PictureUrl;
             if (file == null)
                 return BadRequest("Please add photo to your product.");
-
             var path = Path.Combine("wwwroot/images/", "ProfilePhotoFor" + user.UserName + "_" + file.FileName);
             var stream = new FileStream(path, FileMode.Create);
             await file.CopyToAsync(stream);
             await stream.DisposeAsync();
             user.PictureUrl = path[7..];
+            if (System.IO.File.Exists(path))
+                System.IO.File.Delete(path);
             await _accountService.UpdateUser(user);
             return Ok("Done");
         }

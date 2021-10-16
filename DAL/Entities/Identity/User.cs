@@ -21,6 +21,7 @@ namespace DAL.Entities.Identity
         public DateTime Birthday { get; set; }
         public string Country { get; set; }
         public string PictureUrl { get; set; }
+        public string Gender { get; set; }
         public DateTime StartRegisterDate { get; set; }
         public virtual ICollection<Message> UserSenders { get; set; }
         public virtual ICollection<Message> UserRecivers { get; set; }
@@ -31,8 +32,8 @@ namespace DAL.Entities.Identity
         public virtual ICollection<Role> Roles { get; set; }
         public virtual ICollection<StudentCourse> Courses { get; set; }
         public virtual ICollection<StudentFavoriteCourse> FavorateCourses { get; set; }
-        public virtual ICollection<StudentAnswer> QuizzesAnswers  { get; set; } 
-        public virtual ICollection<StudentWatchedVedio> WatchedVedios  { get; set; }
+        public virtual ICollection<StudentAnswer> QuizzesAnswers { get; set; }
+        public virtual ICollection<StudentWatchedVedio> WatchedVedios { get; set; }
 
         [NotMapped]
         public string FullName { get => FirstName + " " + LastName; }

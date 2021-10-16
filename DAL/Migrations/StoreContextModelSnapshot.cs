@@ -300,6 +300,9 @@ namespace DAL.Migrations
                         .IsUnicode(true)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Gender")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("LastName")
                         .IsUnicode(true)
                         .HasColumnType("TEXT");

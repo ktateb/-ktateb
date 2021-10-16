@@ -1,0 +1,24 @@
+[
+    {
+      "UserName": "AhmadNour",
+      "Email": "Ahmad@gmail.com",
+      "Password": "Pa$$w0rd",
+      "EmailConfirmed": "True",
+      "PhoneNumber": "0949151627",
+      "FirstName": "Ahmad Nour",
+      "LastName": "Al-Sabaggh",
+      "Gender": "Male",
+      "Country":"Syria"
+    },
+    {
+      "UserName": "MohammadSarya",
+      "Email": "MohammadSarya@gmail.com",
+      "Password": "Pa$$w0rd",
+      "EmailConfirmed": "True",
+      "PhoneNumber": "0949151627",
+      "FirstName": "Mohammad Sarya",
+      "LastName": "Tulaimat",
+      "Gender": "Male",
+      "Country":"Syria"
+    }    
+  ]

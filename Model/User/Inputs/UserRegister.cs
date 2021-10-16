@@ -12,6 +12,7 @@ namespace Model.User.Inputs
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime Birthday { get; set; }
+        public string Gender { get; set; }
         public string Country { get; set; }
     }
     public class UserRegisterValidator : AbstractValidator<UserRegister>
