@@ -23,13 +23,14 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Services.Profiles;
 using DAL.Entities.Countries;
+using DAL.Entities.Courses;
 using DAL.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using API.Extensions;
 using FluentValidation;
 using Model.User.Inputs;
 using FluentValidation.AspNetCore;
-
+using DAL.Entities.Categories;
 namespace API
 {
     public class Startup
@@ -57,6 +58,10 @@ namespace API
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IIdentityRepository, IdentityRepository>();
             services.AddScoped(typeof(IGenericRepository<Country>), typeof(GenericRepository<Country>));
+            services.AddScoped(typeof(IGenericRepository<Category>), typeof(GenericRepository<Category>)); 
+
+            services.AddScoped(typeof(IGenericRepository<Course>), typeof(GenericRepository<Course>)); 
+            services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddIdentityServices(_configuration);
 
