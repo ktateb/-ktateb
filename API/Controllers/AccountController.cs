@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using API.Controllers.Common;
 using AutoMapper;
 using DAL.Entities.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Model.User.Inputs;
@@ -25,34 +27,56 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("GetUsers")]
-        public async Task<List<UsersOutput>> GetUsers() =>
-            _mapper.Map<List<User>, List<UsersOutput>>(await _accountService.GetUsers());
-
-        [HttpPost("UpdateUser")]
-        public async Task<ActionResult> UpdateUser(UserUpdateInput input)
+        [HttpGet("User")]
+        public async Task<ActionResult<UsersOutput>> GetUser(string userName)
         {
-            var dbRecord = await _accountService.GetUserByIdAsync(input.Id);
+            var dbRecord = await _accountService.GetUserByNameAsync(userName);
             if (dbRecord == null)
-                return NotFound("This user not exist");
-            if (await _accountService.UpdateUser(_mapper.Map<UserUpdateInput, User>(input)))
+                return NotFound("User not found");
+            var data = _mapper.Map<User, UsersOutput>(dbRecord);
+            return Ok(data);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<UsersOutput>> GetUserByEmail(string email)
+        {
+            var dbRecord = await _accountService.GetUserByEmailAsync(email);
+            if (dbRecord == null)
+                return NotFound("User not found");
+            var data = _mapper.Map<User, UsersOutput>(dbRecord);
+            return Ok(data);
+        }
+
+        [HttpGet("Users")]
+        public async Task<ActionResult<List<UsersOutput>>> GetUsers() =>
+            Ok(_mapper.Map<List<User>, List<UsersOutput>>(await _accountService.GetUsers()));
+
+        [Authorize]
+        [HttpPost("Update")]
+        public async Task<ActionResult> UpdateUser(UserUpdate input)
+        {
+            var user = await _accountService.GetUserByUserClaim(HttpContext.User);
+            if (user == null) return Unauthorized("User is Unauthorized");
+
+            if (await _accountService.UpdateUser(_mapper.Map<UserUpdate, User>(input, user)))
                 return Ok("Done");
             return BadRequest("Error happen when update user");
         }
 
+        [Authorize]
         [HttpDelete("Delete")]
         public async Task<ActionResult> DeleteUser(string id)
         {
-            var dbRecord = await _accountService.GetUserByIdAsync(id);
-            if (dbRecord == null)
-                return NotFound("This user not exist");
+            var user = await _accountService.GetUserByUserClaim(HttpContext.User);
+            if (user == null) return Unauthorized("User is Unauthorized");
+
             if (await _accountService.DeleteUser(id))
                 return Ok("Done");
             return BadRequest("Error happen when delete user");
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult<UserOutput>> Login(UserLoginInput input)
+        public async Task<ActionResult<UserOutput>> Login(UserLogin input)
         {
             var dbRecord = await _accountService.GetUserByEmailAsync(input.UserNameOrEmail);
             if (dbRecord == null)
@@ -69,7 +93,7 @@ namespace API.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<ActionResult<UserOutput>> Register(UserRegisterInput input)
+        public async Task<ActionResult<UserOutput>> Register(UserRegister input)
         {
             var dbRecord = await _accountService.GetUserByNameAsync(input.UserName);
             if (dbRecord != null)
@@ -84,6 +108,38 @@ namespace API.Controllers
             var data = _mapper.Map<User, UserOutput>(dbRecord);
             data.Token = _tokenService.CreateToken(dbRecord);
             return Ok(data);
+        }
+
+        [Authorize]
+        [HttpPost("UploadImage")]
+        public async Task<ActionResult> UploadImage([FromForm] UpdatePhoto input)
+        {
+            var user = await _accountService.GetUserByUserClaim(HttpContext.User);
+            if (user == null) return Unauthorized("User is Unauthorized");
+
+            var file = input.PictureUrl;
+            if (file == null)
+                return BadRequest("Please add photo to your product.");
+
+            var path = Path.Combine("wwwroot/images/", "ProfilePhotoFor" + user.UserName + "_" + file.FileName);
+            var stream = new FileStream(path, FileMode.Create);
+            await file.CopyToAsync(stream);
+            await stream.DisposeAsync();
+            user.PictureUrl = path[7..];
+            await _accountService.UpdateUser(user);
+            return Ok("Done");
+        }
+
+        [Authorize]
+        [HttpPost("ChangePassword")]
+        public async Task<ActionResult> ChangePassword(ChangePassword input)
+        {
+            var user = await _accountService.GetUserByUserClaim(HttpContext.User);
+            if (user == null) return Unauthorized("User is Unauthorized");
+            if (await _accountService.CheckPassword(user, input.CurrentPassword) == false)
+                return BadRequest("Please enter your correct password");
+            await _accountService.ChangePassword(user, input.CurrentPassword, input.Password);
+            return Ok("Done");
         }
     }
 }

@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Model.User.Inputs
 {
-    public class UserRegisterInput
+    public class UserRegister
     {
         public string UserName { get; set; }
         public string Email { get; set; }
@@ -14,9 +14,9 @@ namespace Model.User.Inputs
         public DateTime Birthday { get; set; }
         public string Country { get; set; }
     }
-    public class UserRegisterInputValidator : AbstractValidator<UserRegisterInput>
+    public class UserRegisterValidator : AbstractValidator<UserRegister>
     {
-        public UserRegisterInputValidator()
+        public UserRegisterValidator()
         {
             RuleFor(x => x.UserName)
                 .NotEmpty().WithMessage("Please enter your username");

@@ -37,10 +37,10 @@ namespace Services
             await _categoryrepository.GetQuery().Where(c => c.BaseCategoryID == null).ToListAsync();
 
         public async Task<bool> HaseCoursesAsync(int id) =>
-            await _coursesrepository.GetQuery().Where(x => x.CategoryId == id).CountAsync() > 0;
+            await _coursesrepository.GetQuery().Where(x => x.CategoryId == id).AnyAsync();
 
         public async Task<bool> HaseSubCategoriesAsync(int id) =>
-            await _categoryrepository.GetQuery().Where(x => x.BaseCategoryID == id).CountAsync() > 0;
+            await _categoryrepository.GetQuery().Where(x => x.BaseCategoryID == id).AnyAsync();
 
     }
 

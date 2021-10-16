@@ -12,14 +12,14 @@ namespace Services.Profiles
         {
             CreateMap<User, UsersOutput>()
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.FullName))
-                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles.Select(x => x.Name)));
+                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles.Select(x => x.Name).ToList()));
 
             CreateMap<User, UserOutput>()
-                .ForMember(dest => dest.Token, opt => opt.MapFrom(src => "Token not implemment yet!"))
+                .ForMember(dest => dest.Token, opt => opt.MapFrom(src => ""))
                 .ForMember(dest => dest.DisplayName, opt => opt.MapFrom(src => src.FullName))
-                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles.Select(x => x.Name)));
-            
-            CreateMap<UserUpdateInput , User>();
+                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.Roles.Select(x => x.Name).ToList()));
+
+            CreateMap<UserUpdate, User>();
         }
     }
 }

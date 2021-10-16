@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using DAL.DataContext;
 using DAL.Entities.Identity;
@@ -132,6 +133,26 @@ namespace DAL.Repositories
             return result;
         }
 
+        public async Task<bool> AddRoleToUserAsync(User user, string role)
+        {
+            await _userManager.AddToRoleAsync(user, role);
+            return true;
+        }
+
+        public async Task<User> GetUserByUserClaim(ClaimsPrincipal userClaim)
+        {
+            var username = userClaim?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
+            var user = await _userManager.FindByNameAsync(username);
+            return user;
+        }
+        public async Task<bool> ChangePasssword(User user, string currentPassword, string newPassword)
+        {
+            await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            return true;
+        }
+        public async Task<bool> CheckPassword(User user, string Password) =>
+            await _userManager.CheckPasswordAsync(user, Password);
+
     }
     public interface IIdentityRepository
     {
@@ -152,5 +173,9 @@ namespace DAL.Repositories
         public Task<bool> DeleteRoleByIdAsync(string id);
         public Task<bool> DeleteRoleByNameAsync(string id);
         public Task<List<string>> GetRolesByUserIdAsync(string id);
+        public Task<bool> AddRoleToUserAsync(User user, string role);
+        public Task<User> GetUserByUserClaim(ClaimsPrincipal userClaim);
+        public Task<bool> ChangePasssword(User user, string currentPassword, string newPassword);
+        public Task<bool> CheckPassword(User user, string Password);
     }
 }

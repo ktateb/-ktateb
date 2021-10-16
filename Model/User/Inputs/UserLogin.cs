@@ -2,14 +2,14 @@ using FluentValidation;
 
 namespace Model.User.Inputs
 {
-    public class UserLoginInput
+    public class UserLogin
     {
         public string UserNameOrEmail { get; set; }
         public string Password { get; set; }
     }
-    public class UserLoginInputValidator : AbstractValidator<UserLoginInput>
+    public class UserLoginValidator : AbstractValidator<UserLogin>
     {
-        public UserLoginInputValidator()
+        public UserLoginValidator()
         {
             RuleFor(x =>x.UserNameOrEmail)
                 .NotEmpty().WithMessage("Please enter your UserName Or Email");            

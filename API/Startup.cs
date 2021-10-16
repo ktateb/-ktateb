@@ -23,7 +23,6 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Services.Profiles;
 using DAL.Entities.Countries;
-using DAL.Entities.Courses;
 using DAL.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using API.Extensions;
@@ -31,6 +30,8 @@ using FluentValidation;
 using Model.User.Inputs;
 using FluentValidation.AspNetCore;
 using DAL.Entities.Categories;
+using DAL.Entities.Courses;
+
 namespace API
 {
     public class Startup
@@ -51,9 +52,11 @@ namespace API
                 x.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
 
             services.AddFluentValidation(fv =>
-                fv.RegisterValidatorsFromAssemblyContaining<UserRegisterInputValidator>());
+                fv.RegisterValidatorsFromAssemblyContaining<UserRegisterValidator>());
             services.AddFluentValidation(fv =>
-                            fv.RegisterValidatorsFromAssemblyContaining<UserLoginInputValidator>());
+                            fv.RegisterValidatorsFromAssemblyContaining<UserLoginValidator>());
+            services.AddFluentValidation(fv =>
+                                        fv.RegisterValidatorsFromAssemblyContaining<ChangePasswordValidator>());
 
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IIdentityRepository, IdentityRepository>();
@@ -103,6 +106,8 @@ namespace API
             // app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseStaticFiles();
 
             app.UseAuthentication();
             app.UseAuthorization();
