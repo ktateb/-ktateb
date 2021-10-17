@@ -63,7 +63,7 @@ namespace DAL.Repositories
         /// <returns>true or false</returns>
         public async Task<bool> UpdateAsync(T input)
         {
-            var dbRecord = await _dbContext.Set<T>().Where( i=>i.Id==input.Id).CountAsync();
+            var dbRecord = await _dbContext.Set<T>().Where(i => i.Id == input.Id).CountAsync();
             if (dbRecord == 0)
                 return false;
             _dbContext.Update(input);

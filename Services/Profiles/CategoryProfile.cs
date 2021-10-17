@@ -10,13 +10,13 @@ namespace Services.Profiles
         public CategoryProfile()
         {
             CreateMap<CategoryCreateInput,Category >()
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.name))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.BaseCategoryID, opt => opt.MapFrom(src => src.Parentid));
 
             CreateMap<CategoryUpdateInput, Category>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.id))
-                .ForMember(dest => dest.BaseCategoryID, opt => opt.MapFrom(src => src.parentId))
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.name));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.BaseCategoryID, opt => opt.MapFrom(src => src.ParentId))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Name));
             
             CreateMap<Category , CategoryOutput>() 
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))

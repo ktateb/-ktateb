@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20211016114832_InitialCreate")]
+    [Migration("20211017011020_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -372,16 +372,22 @@ namespace DAL.Migrations
                     b.Property<DateTime>("DateSent")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsRead")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("RecipentDelete")
+                    b.Property<bool>("IsUpdated")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("RecipentDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ReciverId")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("SenderDelete")
+                    b.Property<bool>("SenderDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SenderId")

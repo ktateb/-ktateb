@@ -163,6 +163,8 @@ namespace Services
         public async Task<Role> GetRoleByNameAsync(string name) =>
             await _identityRepository.GetRoleByNameAsync(name);
 
+        public async Task<List<Role>> GetRolesAsync() =>
+            await _identityRepository.GetRolesAsync();
     }
     public interface IDashboardService
     {
@@ -176,7 +178,6 @@ namespace Services
         public Task<User> GetUserByUserClaim(ClaimsPrincipal userClaim);
         public Task<bool> ChangePassword(User user, string currentPassword, string newPassword);
         public Task<bool> CheckPassword(User user, string Password);
-
         public Task<bool> CreateRoleAsync(Role inputRole);
         public Task<bool> UpdateRoleAsync(Role inputRole);
         public Task<bool> DeleteRoleByIdAsync(string id);
@@ -186,6 +187,6 @@ namespace Services
         public Task<bool> DeleteRoleInUser(User user, string role);
         public Task<Role> GetRoleByIdAsync(string id);
         public Task<Role> GetRoleByNameAsync(string name);
-
+        public Task<List<Role>> GetRolesAsync();
     }
 }

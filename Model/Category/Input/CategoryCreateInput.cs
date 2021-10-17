@@ -4,13 +4,13 @@ namespace Model.Category.Input
     public class CategoryCreateInput
     { 
         public int? Parentid { get; set; }
-        public string name { get; set; } 
+        public string Name { get; set; } 
     }
     public class CategoryCreateInputValidator : AbstractValidator<CategoryCreateInput>
     {
         public CategoryCreateInputValidator()
         {
-            RuleFor(x =>x.name)
+            RuleFor(x =>x.Name)
                 .NotEmpty().WithMessage("Please enter Category Name");   
                      
         }

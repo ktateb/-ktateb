@@ -22,7 +22,7 @@ namespace API.Controllers
             _categoryServices = categoryServices;
         }
         [HttpGet("{id}/SubCategories")]
-        public async Task<List<CategoryOutput>> subcategories(int id) =>
+        public async Task<List<CategoryOutput>> SubSategories(int id) =>
             _mapper.Map<List<Category>, List<CategoryOutput>>(await _categoryServices.GetSubCategoriesAsync(id));
 
         [HttpGet("{id}")]
@@ -72,11 +72,11 @@ namespace API.Controllers
         [HttpPost("Update")]
         public async Task<ActionResult> Update(CategoryUpdateInput category)
         {
-            if (category.parentId != null)
+            if (category.ParentId != null)
             {
-                if (await _categoryServices.GetCategoryByIdAsync(category.parentId ?? 0) == null)
+                if (await _categoryServices.GetCategoryByIdAsync(category.ParentId ?? 0) == null)
                     return BadRequest("parent category not found");
-            } 
+            }
             if (await _categoryServices.UpdateCategoryAsync(_mapper.Map<CategoryUpdateInput, Category>(category)))
             {
                 return Ok("Done");

@@ -164,9 +164,11 @@ namespace DAL.Migrations
                     DateSent = table.Column<DateTime>(type: "TEXT", nullable: false),
                     DateRead = table.Column<DateTime>(type: "TEXT", nullable: false),
                     IsRead = table.Column<bool>(type: "INTEGER", nullable: false),
-                    SenderDelete = table.Column<bool>(type: "INTEGER", nullable: false),
-                    RecipentDelete = table.Column<bool>(type: "INTEGER", nullable: false),
+                    SenderDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
+                    RecipentDeleted = table.Column<bool>(type: "INTEGER", nullable: false),
                     Text = table.Column<string>(type: "TEXT", nullable: true),
+                    IsUpdated = table.Column<bool>(type: "INTEGER", nullable: false),
                     SenderId = table.Column<string>(type: "TEXT", nullable: true),
                     ReciverId = table.Column<string>(type: "TEXT", nullable: true)
                 },

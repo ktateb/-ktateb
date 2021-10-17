@@ -3,17 +3,17 @@ namespace Model.Category.Input
 {
     public class CategoryUpdateInput
     {
-        public int id { get; set; }
-        public int? parentId { get; set; }
-        public string name{get;set;}
+        public int Id { get; set; }
+        public int? ParentId { get; set; }
+        public string Name{get;set;}
     }
     public class CategoryUpdateInputValidator : AbstractValidator<CategoryUpdateInput>
     {
         public CategoryUpdateInputValidator()
         {
-            RuleFor(x =>x.id)
+            RuleFor(x =>x.Id)
                 .NotEmpty().WithMessage("Please enter Category Id");         
-            RuleFor(x =>x.name)
+            RuleFor(x =>x.Name)
                 .NotEmpty().WithMessage("Please enter Category Name");  
         }
     }

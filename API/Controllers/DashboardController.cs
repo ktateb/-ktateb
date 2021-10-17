@@ -123,7 +123,7 @@ namespace API.Controllers
             var dbRecord = await _dashboardService.GetRoleByIdAsync(inputRole.Id);
             if (dbRecord == null)
                 return BadRequest("This role is not exist");
-            if(await _dashboardService.GetRoleByNameAsync(inputRole.Name) !=null)
+            if (await _dashboardService.GetRoleByNameAsync(inputRole.Name) != null)
                 return BadRequest($"This role {inputRole.Name} is exist");
             var role = _mapper.Map<RoleUpdate, Role>(inputRole, dbRecord);
             await _dashboardService.UpdateRoleAsync(role);
@@ -164,5 +164,8 @@ namespace API.Controllers
         public async Task<ActionResult<RoleOutput>> GetRoleByNameAsync(string name) =>
             Ok(_mapper.Map<Role, RoleOutput>(await _dashboardService.GetRoleByNameAsync(name)));
 
+        [HttpGet("AllRoles")]
+        public async Task<List<RoleOutput>> GetAllRoles() =>
+            _mapper.Map<List<Role>, List<RoleOutput>>(await _dashboardService.GetRolesAsync());
     }
 }

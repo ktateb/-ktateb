@@ -25,23 +25,23 @@ namespace API
             {
                 var services = scope.ServiceProvider;
                 var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-                try
-                {
-                    var context = services.GetRequiredService<StoreContext>();
-                    var userManager = services.GetRequiredService<UserManager<User>>();
-                    var roleManager = services.GetRequiredService<RoleManager<Role>>();
+                // try
+                // {
+                //     var context = services.GetRequiredService<StoreContext>();
+                //     var userManager = services.GetRequiredService<UserManager<User>>();
+                //     var roleManager = services.GetRequiredService<RoleManager<Role>>();
 
-                    await context.Database.MigrateAsync();
-                    await RoleSeed.SeedRoleAsync(roleManager);
-                    await UserSeed.SeedUserAsync(userManager);
-                }
-                catch (Exception e)
-                {
-                    var logger = loggerFactory.CreateLogger<Program>();
-                    logger.LogError(e, "error happen in migration");
-                }
+                //     await context.Database.MigrateAsync();
+                //     await RoleSeed.SeedRoleAsync(roleManager);
+                //     await UserSeed.SeedUserAsync(userManager);
+                // }
+                // catch (Exception e)
+                // {
+                //     var logger = loggerFactory.CreateLogger<Program>();
+                //     logger.LogError(e, "error happen in migration");
+                // }
             }
-            host.Run();
+            await host.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

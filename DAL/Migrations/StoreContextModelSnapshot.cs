@@ -370,16 +370,22 @@ namespace DAL.Migrations
                     b.Property<DateTime>("DateSent")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("IsRead")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("RecipentDelete")
+                    b.Property<bool>("IsUpdated")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("RecipentDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("ReciverId")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("SenderDelete")
+                    b.Property<bool>("SenderDeleted")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SenderId")
