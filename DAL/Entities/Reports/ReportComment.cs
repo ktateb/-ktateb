@@ -14,7 +14,5 @@ namespace DAL.Entities.Reports
         public string UserId { get; set; }
         public virtual Comment Comment { get; set; }
         public int CommentId { get; set; }
-        public virtual SubComment SubComment { get; set; }
-        public int SubCommentId { get; set; }
     }
 }

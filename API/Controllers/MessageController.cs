@@ -40,9 +40,14 @@ namespace API.Controllers
         [HttpDelete("DeleteMessageForAll/{id}")]
         public async Task<ActionResult> DeleteMessageForAll(int id)
         {
+            var user = await _accountService.GetUserByUserClaim(HttpContext.User);
+            if (user == null)
+                return Unauthorized("User is Unauthorized");
             var dbRecord = await _messageRepository.GetMessage(id);
             if (dbRecord == null)
                 return NotFound("Message is not exist");
+            if (dbRecord.SenderId != user.Id)
+                return Unauthorized("User is Unauthorized");
             await _messageRepository.DeleteMessageForAll(id);
             return Ok("Done");
         }

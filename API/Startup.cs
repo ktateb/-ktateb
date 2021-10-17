@@ -17,6 +17,12 @@ using DAL.Entities.Categories;
 using DAL.Entities.Courses;
 using DAL.Entities.Messages;
 using Model.Message.Inputs;
+using DAL.Entities.Reports;
+using Model.Report.User.Inputs;
+using Model.Report.Comment.Inputs;
+using Model.Report.Message.Inputs;
+using Model.Report.Course.Inputs;
+using DAL.Entities.Countries;
 
 namespace API
 {
@@ -30,7 +36,16 @@ namespace API
 
         public void ConfigureServices(IServiceCollection services)
         {
+            #region AutoMapper
             services.AddAutoMapper(typeof(UserProfile));
+            services.AddAutoMapper(typeof(RoleProfile));
+            services.AddAutoMapper(typeof(CategoryProfile));
+            services.AddAutoMapper(typeof(MessageProfile));
+            services.AddAutoMapper(typeof(ReportProfile));
+            services.AddAutoMapper(typeof(ReportProfile));
+            services.AddAutoMapper(typeof(CountryProfile));
+            #endregion
+
             services.AddControllers();
             services.AddDbContext<StoreContext>(x =>
                 x.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
@@ -48,6 +63,14 @@ namespace API
                 fv.RegisterValidatorsFromAssemblyContaining<MessageInputValidator>());
             services.AddFluentValidation(fv =>
                 fv.RegisterValidatorsFromAssemblyContaining<UserUpdateValidator>());
+            services.AddFluentValidation(fv =>
+                fv.RegisterValidatorsFromAssemblyContaining<ReportUserInputValidator>());
+            services.AddFluentValidation(fv =>
+                fv.RegisterValidatorsFromAssemblyContaining<ReportCommentInputValidator>());
+            services.AddFluentValidation(fv =>
+                fv.RegisterValidatorsFromAssemblyContaining<ReportMessageInputValidator>());
+            services.AddFluentValidation(fv =>
+                fv.RegisterValidatorsFromAssemblyContaining<ReportCourseInputValidator>());
             #endregion
 
             #region Dependency Injection
@@ -56,7 +79,14 @@ namespace API
             services.AddScoped(typeof(IGenericRepository<Category>), typeof(GenericRepository<Category>));
             services.AddScoped(typeof(IGenericRepository<Message>), typeof(GenericRepository<Message>));
             services.AddScoped(typeof(IGenericRepository<Course>), typeof(GenericRepository<Course>));
+            services.AddScoped(typeof(IGenericRepository<ReportCourse>), typeof(GenericRepository<ReportCourse>));
+            services.AddScoped(typeof(IGenericRepository<ReportComment>), typeof(GenericRepository<ReportComment>));
+            services.AddScoped(typeof(IGenericRepository<ReportUser>), typeof(GenericRepository<ReportUser>));
+            services.AddScoped(typeof(IGenericRepository<ReportMessage>), typeof(GenericRepository<ReportMessage>));
+            services.AddScoped(typeof(IGenericRepository<Country>), typeof(GenericRepository<Country>));
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<ICountryService, CountryService>();
             services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<ITokenService, TokenService>();
@@ -107,6 +137,7 @@ namespace API
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseSwagger();

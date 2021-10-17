@@ -65,7 +65,8 @@ namespace DAL.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: true)
+                    Name = table.Column<string>(type: "TEXT", nullable: true),
+                    Code = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -591,7 +592,7 @@ namespace DAL.Migrations
                     DateReport = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UserId = table.Column<string>(type: "TEXT", nullable: true),
                     CommentId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SubCommentId = table.Column<int>(type: "INTEGER", nullable: false)
+                    SubCommentId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -613,35 +614,7 @@ namespace DAL.Migrations
                         column: x => x.SubCommentId,
                         principalTable: "SubComments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ReportSubComments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Text = table.Column<string>(type: "TEXT", nullable: true),
-                    DateReport = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: true),
-                    SubCommentId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ReportSubComments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ReportSubComments_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ReportSubComments_SubComments_SubCommentId",
-                        column: x => x.SubCommentId,
-                        principalTable: "SubComments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -865,16 +838,6 @@ namespace DAL.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReportSubComments_SubCommentId",
-                table: "ReportSubComments",
-                column: "SubCommentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ReportSubComments_UserId",
-                table: "ReportSubComments",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ReportUsers_UserReciveReportId",
                 table: "ReportUsers",
                 column: "UserReciveReportId");
@@ -983,9 +946,6 @@ namespace DAL.Migrations
                 name: "ReportMessages");
 
             migrationBuilder.DropTable(
-                name: "ReportSubComments");
-
-            migrationBuilder.DropTable(
                 name: "ReportUsers");
 
             migrationBuilder.DropTable(
@@ -1004,10 +964,10 @@ namespace DAL.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Messages");
+                name: "SubComments");
 
             migrationBuilder.DropTable(
-                name: "SubComments");
+                name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "QuizOptions");

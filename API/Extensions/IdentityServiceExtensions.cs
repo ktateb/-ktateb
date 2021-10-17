@@ -12,7 +12,7 @@ namespace API.Extensions
 {
     public static class IdentityServiceExtensions
     {
-        public static IServiceCollection AddIdentityServices(this IServiceCollection services , IConfiguration config)
+        public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
         {
             services.AddIdentityCore<User>()
                 .AddRoles<Role>()
@@ -23,7 +23,7 @@ namespace API.Extensions
 
             services.AddAuthentication(
                 JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => 
+                .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -33,8 +33,7 @@ namespace API.Extensions
                         ValidateIssuer = true,
                         ValidateAudience = false
                     };
-                }
-                );
+                });
 
             return services;
         }

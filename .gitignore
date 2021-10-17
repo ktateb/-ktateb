@@ -402,6 +402,6 @@ FodyWeavers.xsd
 .history/
 
 *.db
-*.db-shm
-*.db-wal
+KtatebDB.db-shm
+KtatebDB.db-wal
 

@@ -101,6 +101,9 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Code")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
@@ -439,7 +442,7 @@ namespace DAL.Migrations
                     b.Property<DateTime>("DateReport")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("SubCommentId")
+                    b.Property<int?>("SubCommentId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Text")
@@ -511,33 +514,6 @@ namespace DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ReportMessages");
-                });
-
-            modelBuilder.Entity("DAL.Entities.Reports.ReportSubComment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("DateReport")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("SubCommentId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SubCommentId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ReportSubComments");
                 });
 
             modelBuilder.Entity("DAL.Entities.Reports.ReportUser", b =>
@@ -1000,19 +976,15 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DAL.Entities.Comments.SubComment", "SubComment")
-                        .WithMany()
-                        .HasForeignKey("SubCommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("DAL.Entities.Comments.SubComment", null)
+                        .WithMany("ReportsComment")
+                        .HasForeignKey("SubCommentId");
 
                     b.HasOne("DAL.Entities.Identity.User", "UserSendReport")
                         .WithMany()
                         .HasForeignKey("UserId");
 
                     b.Navigation("Comment");
-
-                    b.Navigation("SubComment");
 
                     b.Navigation("UserSendReport");
                 });
@@ -1047,23 +1019,6 @@ namespace DAL.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("Message");
-
-                    b.Navigation("UserSendReport");
-                });
-
-            modelBuilder.Entity("DAL.Entities.Reports.ReportSubComment", b =>
-                {
-                    b.HasOne("DAL.Entities.Comments.SubComment", "SubComment")
-                        .WithMany("ReportsSubComment")
-                        .HasForeignKey("SubCommentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DAL.Entities.Identity.User", "UserSendReport")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("SubComment");
 
                     b.Navigation("UserSendReport");
                 });
@@ -1215,7 +1170,7 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Entities.Comments.SubComment", b =>
                 {
-                    b.Navigation("ReportsSubComment");
+                    b.Navigation("ReportsComment");
                 });
 
             modelBuilder.Entity("DAL.Entities.CourseQuizes.SectionQuiz", b =>
