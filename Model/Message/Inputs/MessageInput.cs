@@ -5,11 +5,6 @@ namespace Model.Message.Inputs
 {
     public class MessageInput
     {
-        public MessageInput()
-        {
-            this.DateSent = DateTime.UtcNow;
-        }
-        private DateTime DateSent { get; set; }
         public string Text { get; set; }
         public string ReciverId { get; set; }
     }

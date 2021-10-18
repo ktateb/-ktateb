@@ -56,7 +56,7 @@ namespace DAL.Migrations
                         column: x => x.BaseCategoryID,
                         principalTable: "Categories",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,7 +92,7 @@ namespace DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -181,13 +181,13 @@ namespace DAL.Migrations
                         column: x => x.ReciverId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Messages_AspNetUsers_SenderId",
                         column: x => x.SenderId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -209,13 +209,13 @@ namespace DAL.Migrations
                         column: x => x.UserReciveReportId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ReportUsers_AspNetUsers_UserSendReportId",
                         column: x => x.UserSendReportId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -240,7 +240,7 @@ namespace DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -307,7 +307,7 @@ namespace DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ReportMessages_Messages_MessageId",
                         column: x => x.MessageId,
@@ -368,7 +368,7 @@ namespace DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comments_Courses_CourseId",
                         column: x => x.CourseId,
@@ -416,7 +416,7 @@ namespace DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Ratings_Courses_CourseId",
                         column: x => x.CourseId,
@@ -444,7 +444,7 @@ namespace DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ReportCourses_Courses_CourseId",
                         column: x => x.CourseId,
@@ -472,7 +472,7 @@ namespace DAL.Migrations
                         column: x => x.UserId1,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StudentCourses_Courses_CourseId",
                         column: x => x.CourseId,
@@ -500,7 +500,7 @@ namespace DAL.Migrations
                         column: x => x.UserId1,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StudentFavoriteCourses_Courses_CourseId",
                         column: x => x.CourseId,
@@ -529,7 +529,7 @@ namespace DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_SubComments_Comments_CommentId",
                         column: x => x.CommentId,
@@ -602,7 +602,7 @@ namespace DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ReportComments_Comments_CommentId",
                         column: x => x.CommentId,
@@ -614,7 +614,7 @@ namespace DAL.Migrations
                         column: x => x.SubCommentId,
                         principalTable: "SubComments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -636,7 +636,7 @@ namespace DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StudentWatchedVedio_CourseVedios_VedioId",
                         column: x => x.VedioId,
@@ -685,7 +685,7 @@ namespace DAL.Migrations
                         column: x => x.UserId1,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_StudentAnswers_QuizOptions_AnswerId",
                         column: x => x.AnswerId,

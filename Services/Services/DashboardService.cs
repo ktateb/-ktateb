@@ -1,10 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using DAL.Entities.Comments;
+using DAL.Entities.Courses;
 using DAL.Entities.Identity;
 using DAL.Entities.Identity.enums;
+using DAL.Entities.Messages;
+using DAL.Entities.Reports;
 using DAL.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Model.User.Inputs;
 
 namespace Services
@@ -12,10 +18,30 @@ namespace Services
     public class DashboardService : IDashboardService
     {
         private readonly IIdentityRepository _identityRepository;
+        private readonly IGenericRepository<Message> _messageRepository;
+        private readonly IGenericRepository<Course> _courseRepository;
+        private readonly IGenericRepository<Comment> _commentRepository;
+        private readonly IGenericRepository<ReportComment> _reportCommentRepository;
+        private readonly IGenericRepository<ReportUser> _reportUserRepository;
+        private readonly IGenericRepository<ReportMessage> _reportMessageRepository;
+        private readonly IGenericRepository<ReportCourse> _reportCourseRepository;
+        private readonly IGenericRepository<SubComment> _subCommentRepository;
 
-        public DashboardService(IIdentityRepository identityRepository)
+        public DashboardService(IIdentityRepository identityRepository
+            , IGenericRepository<Comment> commentRepository, IGenericRepository<Message> messageRepository
+            , IGenericRepository<Course> courseRepository, IGenericRepository<ReportComment> reportCommentRepository
+            , IGenericRepository<ReportUser> reportUserRepository, IGenericRepository<ReportMessage> reportMessageRepository
+            , IGenericRepository<ReportCourse> reportCourseRepository, IGenericRepository<SubComment> subCommentRepository)
         {
+            _commentRepository = commentRepository;
             _identityRepository = identityRepository;
+            _messageRepository = messageRepository;
+            _courseRepository = courseRepository;
+            _reportCommentRepository = reportCommentRepository;
+            _reportUserRepository = reportUserRepository;
+            _reportMessageRepository = reportMessageRepository;
+            _reportCourseRepository = reportCourseRepository;
+            _subCommentRepository = subCommentRepository;
         }
 
         public async Task<User> GetUserByEmailAsync(string email)
@@ -139,8 +165,10 @@ namespace Services
 
         public async Task<bool> ChangePassword(User user, string currentPassword, string newPassword) =>
             await _identityRepository.ChangePasssword(user, currentPassword, newPassword);
+
         public async Task<bool> CheckPassword(User user, string Password) =>
             await _identityRepository.CheckPassword(user, Password);
+
         public async Task<bool> CreateRoleAsync(Role inputRole) =>
             await _identityRepository.CreateRoleAsync(inputRole);
 
@@ -155,6 +183,7 @@ namespace Services
 
         public async Task<bool> AddRoleToUserAsync(User user, string role) =>
             await _identityRepository.AddRoleToUserAsync(user, role);
+
         public async Task<bool> DeleteRoleInUser(User user, string role) =>
             await _identityRepository.DeleteRoleInUser(user, role);
 
@@ -165,6 +194,41 @@ namespace Services
 
         public async Task<List<Role>> GetRolesAsync() =>
             await _identityRepository.GetRolesAsync();
+
+        public async Task<List<ReportMessage>> ShowReportedMessages() =>
+            await _reportMessageRepository.GetQuery().Include(us => us.UserSendReport).Include(x => x.Message).ThenInclude(x => x.Sender).ToListAsync();
+
+        public async Task<List<ReportMessage>> ShowReportedMessage(int id) =>
+            await _reportMessageRepository.GetQuery().Where(x => x.MessageId == id).Include(us => us.UserSendReport).Include(x => x.Message).ThenInclude(x => x.Sender).ToListAsync();
+
+        public async Task<List<ReportComment>> ShowReportedComments() =>
+            await _reportCommentRepository.GetQuery().Include(us => us.UserSendReport).Include(x => x.Comment).ToListAsync();
+
+        public async Task<List<ReportComment>> ShowReportedComment(int id) =>
+            await _reportCommentRepository.GetQuery().Where(x => x.CommentId == id).Include(us => us.UserSendReport).Include(x => x.Comment).ToListAsync();
+
+        public async Task<List<ReportCourse>> ShowReportedCourses() =>
+            await _reportCourseRepository.GetQuery().Include(x => x.Course).ThenInclude(x => x.Teacher).ThenInclude(u => u.User).ToListAsync();
+
+        public async Task<List<ReportCourse>> ShowReportedCourse(int id) =>
+            await _reportCourseRepository.GetQuery().Where(x => x.CourseId == id).Include(x => x.Course).ThenInclude(x => x.Teacher).ThenInclude(u => u.User).ToListAsync();
+
+        public async Task<List<ReportUser>> ShowReportedUsers() =>
+            await _reportUserRepository.GetQuery().Include(x => x.UserSendReport).Include(x => x.UserReciveReport).ToListAsync();
+
+        public async Task<List<ReportUser>> ShowReportedUser(string id) =>
+            await _reportUserRepository.GetQuery().Where(x => x.UserReciveReportId == id).Include(x => x.UserSendReport).Include(x => x.UserReciveReport).ToListAsync();
+
+        public async Task<bool> DeleteMessage(int messageId) =>
+            await _messageRepository.DeleteAsync(messageId);
+
+        public async Task<bool> DeleteComment(int commentId) =>
+            await _commentRepository.DeleteAsync(commentId);
+
+        public async Task<bool> DeleteSubComment(int subCommentId) =>
+            await _subCommentRepository.DeleteAsync(subCommentId);
+        public async Task<bool> DeleteCourse(int courseId) =>
+            await _courseRepository.DeleteAsync(courseId);
     }
     public interface IDashboardService
     {
@@ -188,5 +252,17 @@ namespace Services
         public Task<Role> GetRoleByIdAsync(string id);
         public Task<Role> GetRoleByNameAsync(string name);
         public Task<List<Role>> GetRolesAsync();
+        public Task<List<ReportMessage>> ShowReportedMessages();
+        public Task<List<ReportMessage>> ShowReportedMessage(int id);
+        public Task<List<ReportComment>> ShowReportedComments();
+        public Task<List<ReportComment>> ShowReportedComment(int id);
+        public Task<List<ReportCourse>> ShowReportedCourses();
+        public Task<List<ReportCourse>> ShowReportedCourse(int id);
+        public Task<List<ReportUser>> ShowReportedUsers();
+        public Task<List<ReportUser>> ShowReportedUser(string id);
+        public Task<bool> DeleteMessage(int messageId);
+        public Task<bool> DeleteComment(int commentId);
+        public Task<bool> DeleteSubComment(int subCommentId);
+        public Task<bool> DeleteCourse(int courseId);
     }
 }

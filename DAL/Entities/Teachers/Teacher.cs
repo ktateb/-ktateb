@@ -14,7 +14,6 @@ namespace DAL.Entities.Teachers
         public string Specialist { get; set; }
         public virtual User User { get; set; }
         public string UserId { get; set; }
-
         public virtual ICollection<Course> Courses { get; set; }
     }
 }

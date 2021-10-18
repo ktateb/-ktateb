@@ -2,7 +2,7 @@ namespace DAL.Entities.Ratings.enums
 {
     public enum RatingStar
     {
-        One,
+        One = 1,
         Two,
         Three,
         Four,

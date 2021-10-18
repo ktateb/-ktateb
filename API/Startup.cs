@@ -23,6 +23,9 @@ using Model.Report.Comment.Inputs;
 using Model.Report.Message.Inputs;
 using Model.Report.Course.Inputs;
 using DAL.Entities.Countries;
+using DAL.Entities.Ratings;
+using Model.Rating.Inputs;
+using DAL.Entities.Comments;
 
 namespace API
 {
@@ -44,6 +47,7 @@ namespace API
             services.AddAutoMapper(typeof(ReportProfile));
             services.AddAutoMapper(typeof(ReportProfile));
             services.AddAutoMapper(typeof(CountryProfile));
+            services.AddAutoMapper(typeof(RatingProfile));
             #endregion
 
             services.AddControllers();
@@ -71,6 +75,8 @@ namespace API
                 fv.RegisterValidatorsFromAssemblyContaining<ReportMessageInputValidator>());
             services.AddFluentValidation(fv =>
                 fv.RegisterValidatorsFromAssemblyContaining<ReportCourseInputValidator>());
+            services.AddFluentValidation(fv =>
+            fv.RegisterValidatorsFromAssemblyContaining<RatingInputValidator>());
             #endregion
 
             #region Dependency Injection
@@ -78,13 +84,16 @@ namespace API
             services.AddScoped<IIdentityRepository, IdentityRepository>();
             services.AddScoped(typeof(IGenericRepository<Category>), typeof(GenericRepository<Category>));
             services.AddScoped(typeof(IGenericRepository<Message>), typeof(GenericRepository<Message>));
+            services.AddScoped(typeof(IGenericRepository<Comment>), typeof(GenericRepository<Comment>));
             services.AddScoped(typeof(IGenericRepository<Course>), typeof(GenericRepository<Course>));
             services.AddScoped(typeof(IGenericRepository<ReportCourse>), typeof(GenericRepository<ReportCourse>));
             services.AddScoped(typeof(IGenericRepository<ReportComment>), typeof(GenericRepository<ReportComment>));
             services.AddScoped(typeof(IGenericRepository<ReportUser>), typeof(GenericRepository<ReportUser>));
             services.AddScoped(typeof(IGenericRepository<ReportMessage>), typeof(GenericRepository<ReportMessage>));
             services.AddScoped(typeof(IGenericRepository<Country>), typeof(GenericRepository<Country>));
+            services.AddScoped(typeof(IGenericRepository<Rating>), typeof(GenericRepository<Rating>));
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ICountryService, CountryService>();
             services.AddScoped<ICategoryServices, CategoryServices>();

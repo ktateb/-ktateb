@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Controllers.Common;
@@ -98,6 +99,7 @@ namespace API.Controllers
 
             var message = _mapper.Map<MessageInput, Message>(input);
             message.SenderId = user.Id;
+            message.DateSent = DateTime.UtcNow;
             await _messageRepository.SendMessage(message);
             return Ok(_mapper.Map<Message, MessageOutput>(message));
         }

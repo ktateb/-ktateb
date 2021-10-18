@@ -3,8 +3,13 @@ using System.Threading.Tasks;
 using API.Controllers.Common;
 using AutoMapper;
 using DAL.Entities.Identity;
+using DAL.Entities.Reports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Model.Report.Comment.Outputs;
+using Model.Report.Course.Outputs;
+using Model.Report.Message.Outputs;
+using Model.Report.User.Outputs;
 using Model.Role.Inputs;
 using Model.Role.Outputs;
 using Model.User.Inputs;
@@ -16,12 +21,14 @@ namespace API.Controllers
     [Authorize(Roles = "Admin")]
     public class DashboardController : BaseController
     {
+        private readonly IMessageService _messageService;
         private readonly IDashboardService _dashboardService;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
 
-        public DashboardController(IDashboardService dashboardService, ITokenService tokenService, IMapper mapper)
+        public DashboardController(IMessageService messageService, IDashboardService dashboardService, ITokenService tokenService, IMapper mapper)
         {
+            _messageService = messageService;
             _dashboardService = dashboardService;
             _tokenService = tokenService;
             _mapper = mapper;
@@ -167,5 +174,47 @@ namespace API.Controllers
         [HttpGet("AllRoles")]
         public async Task<List<RoleOutput>> GetAllRoles() =>
             _mapper.Map<List<Role>, List<RoleOutput>>(await _dashboardService.GetRolesAsync());
+
+        [HttpGet("ShowReportedMessages")]
+        public async Task<ActionResult<List<ReportMessageForDashboard>>> ShowReportedMessages() =>
+            Ok(_mapper.Map<List<ReportMessage>, List<ReportMessageForDashboard>>(await _dashboardService.ShowReportedMessages()));
+
+        [HttpGet("ShowReportedMessage/{messageId}")]
+        public async Task<ActionResult<List<ReportMessageForDashboard>>> ShowReportedMessage(int messageId) =>
+            Ok(_mapper.Map<List<ReportMessage>, List<ReportMessageForDashboard>>(await _dashboardService.ShowReportedMessage(messageId)));
+
+        [HttpGet("ShowReportedComments")]
+        public async Task<ActionResult<List<ReportCommentForDashboard>>> ShowReportedComments() =>
+            Ok(_mapper.Map<List<ReportComment>, List<ReportCommentForDashboard>>(await _dashboardService.ShowReportedComments()));
+
+        [HttpGet("ShowReportedComment/{commentId}")]
+        public async Task<ActionResult<List<ReportCommentForDashboard>>> ShowReportedComment(int commentId) =>
+            Ok(_mapper.Map<List<ReportComment>, List<ReportCommentForDashboard>>(await _dashboardService.ShowReportedComment(commentId)));
+
+        [HttpGet("ShowReportedCourses")]
+        public async Task<ActionResult<List<ReportCourseForDashboard>>> ShowReportedCourses() =>
+            Ok(_mapper.Map<List<ReportCourse>, List<ReportCourseForDashboard>>(await _dashboardService.ShowReportedCourses()));
+
+        [HttpGet("ShowReportedCourses/{courseId}")]
+        public async Task<ActionResult<List<ReportCourseForDashboard>>> ShowReportedCourse(int courseId) =>
+            Ok(_mapper.Map<List<ReportCourse>, List<ReportCourseForDashboard>>(await _dashboardService.ShowReportedCourse(courseId)));
+
+        [HttpGet("ShowReportedUsers")]
+        public async Task<ActionResult<List<ShowReportUserForDashboard>>> ShowReportedUsers() =>
+            Ok(_mapper.Map<List<ReportUser>, List<ShowReportUserForDashboard>>(await _dashboardService.ShowReportedUsers()));
+
+        [HttpGet("ShowReportedUser/{userId}")]
+        public async Task<ActionResult<List<ShowReportUserForDashboard>>> ShowReportedCourse(string userId) =>
+            Ok(_mapper.Map<List<ReportUser>, List<ShowReportUserForDashboard>>(await _dashboardService.ShowReportedUser(userId)));
+
+        [HttpPost("DeleteMessage/{messageId}")]
+        public async Task<ActionResult> DeleteMessage(int messageId)
+        {
+            var dbRecord = await _messageService.GetMessage(messageId);
+            if (dbRecord == null)
+                return NotFound("This message is not exist");
+            await _dashboardService.DeleteMessage(messageId);
+            return Ok("Done");
+        }
     }
 }
