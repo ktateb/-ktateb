@@ -52,7 +52,7 @@ namespace API.Controllers
             return Ok(data);
         }
 
-        [HttpGet("User")]
+        [HttpGet("User/{username}")]
         public async Task<ActionResult<UsersOutput>> GetUser(string userName)
         {
             var dbRecord = await _dashboardService.GetUserByNameAsync(userName);

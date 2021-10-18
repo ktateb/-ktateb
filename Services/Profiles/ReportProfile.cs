@@ -24,6 +24,15 @@ namespace Services.Profiles
                 .ForMember(dest => dest.DateSentComment, opt => opt.MapFrom(src => src.Comment.DateComment))
                 .ForMember(dest => dest.UserNameSentComment, opt => opt.MapFrom(src => src.UserSendReport.UserName));
 
+            CreateMap<ReportCommentInput, ReportSubComment>();
+            CreateMap<ReportSubComment, ReportCommentOutput>();
+            CreateMap<ReportSubComment, ReportCommentForDashboard>()
+                .ForMember(dest => dest.ReportText, opt => opt.MapFrom(src => src.Text))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.UserSendReport.UserName))
+                .ForMember(dest => dest.CommentText, opt => opt.MapFrom(src => src.SubComment.Text))
+                .ForMember(dest => dest.DateSentComment, opt => opt.MapFrom(src => src.SubComment.DateComment))
+                .ForMember(dest => dest.UserNameSentComment, opt => opt.MapFrom(src => src.UserSendReport.UserName));
+
             CreateMap<ReportCourseInput, ReportCourse>();
             CreateMap<ReportCourse, ReportCourseOutput>();
             CreateMap<ReportCourse, ReportCourseForDashboard>()

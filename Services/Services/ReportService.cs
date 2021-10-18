@@ -14,15 +14,18 @@ namespace Services
         private readonly IGenericRepository<ReportUser> _reportUserRepository;
         private readonly IGenericRepository<ReportMessage> _reportMessageRepository;
         private readonly IGenericRepository<ReportCourse> _reportCourseRepository;
+        private readonly IGenericRepository<ReportSubComment> _reportSubCommentRepository;
+
 
         public ReportService(IGenericRepository<ReportComment> reportCommentRepository
             , IGenericRepository<ReportUser> reportUserRepository, IGenericRepository<ReportMessage> reportMessageRepository,
-             IGenericRepository<ReportCourse> reportCourseRepository)
+             IGenericRepository<ReportCourse> reportCourseRepository, IGenericRepository<ReportSubComment> reportSubCommentRepository)
         {
             _reportCommentRepository = reportCommentRepository;
             _reportUserRepository = reportUserRepository;
             _reportMessageRepository = reportMessageRepository;
             _reportCourseRepository = reportCourseRepository;
+            _reportSubCommentRepository = reportSubCommentRepository;
         }
         public async Task<bool> ReportComment(ReportComment report) =>
             await _reportCommentRepository.CreateAsync(report);
@@ -35,6 +38,9 @@ namespace Services
 
         public async Task<bool> ReportUser(ReportUser report) =>
             await _reportUserRepository.CreateAsync(report);
+
+        public async Task<bool> ReportSubComment(ReportSubComment report) =>
+            await _reportSubCommentRepository.CreateAsync(report);
     }
     public interface IReportService
     {
@@ -42,5 +48,7 @@ namespace Services
         public Task<bool> ReportComment(ReportComment report);
         public Task<bool> ReportCourse(ReportCourse report);
         public Task<bool> ReportUser(ReportUser report);
+        public Task<bool> ReportSubComment(ReportSubComment report);
+
     }
 }

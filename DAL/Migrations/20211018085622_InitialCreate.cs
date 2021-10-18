@@ -510,6 +510,34 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ReportComments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Text = table.Column<string>(type: "TEXT", nullable: true),
+                    DateReport = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true),
+                    CommentId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReportComments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReportComments_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ReportComments_Comments_CommentId",
+                        column: x => x.CommentId,
+                        principalTable: "Comments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SubComments",
                 columns: table => new
                 {
@@ -583,7 +611,7 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ReportComments",
+                name: "ReportSubComments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -591,26 +619,19 @@ namespace DAL.Migrations
                     Text = table.Column<string>(type: "TEXT", nullable: true),
                     DateReport = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UserId = table.Column<string>(type: "TEXT", nullable: true),
-                    CommentId = table.Column<int>(type: "INTEGER", nullable: false),
-                    SubCommentId = table.Column<int>(type: "INTEGER", nullable: true)
+                    SubCommentId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReportComments", x => x.Id);
+                    table.PrimaryKey("PK_ReportSubComments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ReportComments_AspNetUsers_UserId",
+                        name: "FK_ReportSubComments_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ReportComments_Comments_CommentId",
-                        column: x => x.CommentId,
-                        principalTable: "Comments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ReportComments_SubComments_SubCommentId",
+                        name: "FK_ReportSubComments_SubComments_SubCommentId",
                         column: x => x.SubCommentId,
                         principalTable: "SubComments",
                         principalColumn: "Id",
@@ -808,11 +829,6 @@ namespace DAL.Migrations
                 column: "CommentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReportComments_SubCommentId",
-                table: "ReportComments",
-                column: "SubCommentId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ReportComments_UserId",
                 table: "ReportComments",
                 column: "UserId");
@@ -835,6 +851,16 @@ namespace DAL.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ReportMessages_UserId",
                 table: "ReportMessages",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReportSubComments_SubCommentId",
+                table: "ReportSubComments",
+                column: "SubCommentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReportSubComments_UserId",
+                table: "ReportSubComments",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -946,6 +972,9 @@ namespace DAL.Migrations
                 name: "ReportMessages");
 
             migrationBuilder.DropTable(
+                name: "ReportSubComments");
+
+            migrationBuilder.DropTable(
                 name: "ReportUsers");
 
             migrationBuilder.DropTable(
@@ -964,10 +993,10 @@ namespace DAL.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "SubComments");
+                name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "Messages");
+                name: "SubComments");
 
             migrationBuilder.DropTable(
                 name: "QuizOptions");

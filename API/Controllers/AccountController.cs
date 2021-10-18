@@ -27,6 +27,15 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("User/{username}")]
+        public async Task<ActionResult<UserOutput>> GetUser(string username)
+        {
+            var dbRecord = await _accountService.GetUserByNameAsync(username);
+            if (dbRecord == null)
+                return NotFound($"User {username} is not exist");
+            return Ok(_mapper.Map<User, UserOutput>(dbRecord));
+        }
+
         [Authorize]
         [HttpPost("Update")]
         public async Task<ActionResult> UpdateUser(UserUpdate input)

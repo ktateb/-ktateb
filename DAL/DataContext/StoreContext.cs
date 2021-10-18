@@ -34,6 +34,7 @@ namespace DAL.DataContext
         public DbSet<Message> Messages { get; set; }
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<ReportComment> ReportComments { get; set; }
+        public DbSet<ReportSubComment> ReportSubComments { get; set; }
         public DbSet<ReportCourse> ReportCourses { get; set; }
         public DbSet<ReportMessage> ReportMessages { get; set; }
         public DbSet<ReportUser> ReportUsers { get; set; }

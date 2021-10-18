@@ -64,6 +64,19 @@ namespace API.Controllers
             return Ok(_mapper.Map<ReportComment, ReportCommentOutput>(report));
         }
 
+        [HttpPost("ReportSubComment")]
+        public async Task<ActionResult<ReportCommentOutput>> ReportSubComment(ReportCommentInput input)
+        {
+            var user = await _accountService.GetUserByUserClaim(HttpContext.User);
+            if (user == null)
+                return Unauthorized("User is Unauthorized");
+            var report = _mapper.Map<ReportCommentInput, ReportSubComment>(input);
+            report.UserId = user.Id;
+            report.DateReport = DateTime.UtcNow;
+            await _reportService.ReportSubComment(report);
+            return Ok(_mapper.Map<ReportSubComment, ReportCommentOutput>(report));
+        }
+
         [HttpPost("ReportCourse")]
         public async Task<ActionResult<ReportCourseOutput>> ReportCourse(ReportCourseInput input)
         {

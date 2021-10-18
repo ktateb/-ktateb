@@ -15,6 +15,6 @@ namespace DAL.Entities.Comments
         public int CommentId { get; set; }
         public virtual User User { get; set; }
         public string UserId { get; set; }
-        public virtual ICollection<ReportComment> ReportsComment { get; set; }
+        public virtual ICollection<ReportSubComment> ReportsSubComment { get; set; }
     }
 }
