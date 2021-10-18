@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Model.Category.Input;
 using Model.Category.Output;
 using Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -55,6 +56,7 @@ namespace API.Controllers
             }
             return Ok(parent);
         }
+        [Authorize(Roles ="Admin,Manager")]
         [HttpPost("Create")]
         public async Task<ActionResult> Create(CategoryCreateInput category)
         {
@@ -69,6 +71,7 @@ namespace API.Controllers
             }
             return BadRequest("category not added");
         }
+        [Authorize(Roles ="Admin,Manager")]
         [HttpPost("Update")]
         public async Task<ActionResult> Update(CategoryUpdateInput category)
         {
@@ -83,6 +86,7 @@ namespace API.Controllers
             }
             return NotFound("category not Found");
         }
+        [Authorize(Roles ="Admin,Manager")]
         [HttpDelete("Delete")]
         public async Task<ActionResult> Delete(int id)
         {

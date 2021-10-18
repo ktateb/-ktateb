@@ -26,6 +26,7 @@ using DAL.Entities.Countries;
 using DAL.Entities.Ratings;
 using Model.Rating.Inputs;
 using DAL.Entities.Comments;
+using DAL.Entities.StudentCourses;
 
 namespace API
 {
@@ -40,14 +41,19 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             #region AutoMapper
+            //ahmad
             services.AddAutoMapper(typeof(UserProfile));
             services.AddAutoMapper(typeof(RoleProfile));
-            services.AddAutoMapper(typeof(CategoryProfile));
             services.AddAutoMapper(typeof(MessageProfile));
             services.AddAutoMapper(typeof(ReportProfile));
             services.AddAutoMapper(typeof(ReportProfile));
             services.AddAutoMapper(typeof(CountryProfile));
             services.AddAutoMapper(typeof(RatingProfile));
+            // sarya 
+            services.AddAutoMapper(typeof(CategoryProfile));
+            services.AddAutoMapper(typeof(CourseProfile)); 
+            services.AddAutoMapper(typeof(CourseSectionProfile)); 
+            services.AddAutoMapper(typeof(TeacherProfile));
             #endregion
 
             services.AddControllers();
@@ -80,12 +86,11 @@ namespace API
             #endregion
 
             #region Dependency Injection
+            //ahmad Services
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IIdentityRepository, IdentityRepository>();
-            services.AddScoped(typeof(IGenericRepository<Category>), typeof(GenericRepository<Category>));
             services.AddScoped(typeof(IGenericRepository<Message>), typeof(GenericRepository<Message>));
             services.AddScoped(typeof(IGenericRepository<Comment>), typeof(GenericRepository<Comment>));
-            services.AddScoped(typeof(IGenericRepository<Course>), typeof(GenericRepository<Course>));
             services.AddScoped(typeof(IGenericRepository<ReportCourse>), typeof(GenericRepository<ReportCourse>));
             services.AddScoped(typeof(IGenericRepository<ReportComment>), typeof(GenericRepository<ReportComment>));
             services.AddScoped(typeof(IGenericRepository<ReportSubComment>), typeof(GenericRepository<ReportSubComment>));
@@ -98,9 +103,17 @@ namespace API
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ICountryService, CountryService>();
-            services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<IMessageService, MessageService>();
-            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<ITokenService, TokenService>(); 
+            ////////sarya Services
+            services.AddScoped<ICategoryServices, CategoryServices>();
+            services.AddScoped(typeof(IGenericRepository<Category>), typeof(GenericRepository<Category>));
+            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped(typeof(IGenericRepository<Course>), typeof(GenericRepository<Course>));
+            services.AddScoped<ICourseSectionService, CourseSectionService>();
+            services.AddScoped(typeof(IGenericRepository<CourseSection>), typeof(GenericRepository<CourseSection>));
+            services.AddScoped(typeof(IGenericRepository<CourseVedio>), typeof(GenericRepository<CourseVedio>)); 
+            services.AddScoped(typeof(IGenericRepository<StudentCourse>), typeof(GenericRepository<StudentCourse>)); 
             services.AddIdentityServices(_configuration);
             #endregion
 

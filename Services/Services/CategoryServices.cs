@@ -42,6 +42,18 @@ namespace Services
         public async Task<bool> HaseSubCategoriesAsync(int id) =>
             await _categoryrepository.GetQuery().Where(x => x.BaseCategoryID == id).AnyAsync();
 
+       /* public async Task<List<Course>> getCourseOrdered(int CategoryId, int Limit, int Orderby  , int Moreafter=0 )
+        {
+            IQueryable<Course> q = _coursesrepository.GetQuery().Where(c => c.CategoryId == CategoryId);
+            if (Orderby == 1)
+                q = q.OrderBy(c => c.CreatedDate);
+            else if (Orderby == 2)
+            {
+                q = q.OrderBy(c => c.Ratings.Average(x=>((int)x.RatingStar)));
+            }
+            return await q.SkipWhile(c => c.Id != Moreafter || Moreafter == 0).Skip(1).Take(Limit).ToListAsync();
+
+        }*/
     }
 
     public interface ICategoryServices
@@ -62,5 +74,7 @@ namespace Services
         public Task<bool> HaseSubCategoriesAsync(int id);
 
         public Task<bool> HaseCoursesAsync(int id);
+
+    //  public Task<List<Course>> getCourseOrdered(int CategoryId, int Orderby, int Limit, int Moreafter);
     }
 }

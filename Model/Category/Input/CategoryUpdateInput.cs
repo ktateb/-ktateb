@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using FluentValidation;
 namespace Model.Category.Input
 {
@@ -5,6 +6,7 @@ namespace Model.Category.Input
     {
         public int Id { get; set; }
         public int? ParentId { get; set; }
+        [Required]
         public string Name{get;set;}
     }
     public class CategoryUpdateInputValidator : AbstractValidator<CategoryUpdateInput>
