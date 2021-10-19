@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Controllers.Common;
+using API.Helpers;
 using AutoMapper;
 using DAL.Entities.Identity;
 using DAL.Entities.Reports;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Report.Comment.Outputs;
 using Model.Report.Course.Outputs;
+using Model.Report.Message.Inputs;
 using Model.Report.Message.Outputs;
 using Model.Report.User.Outputs;
 using Model.Role.Inputs;
@@ -72,6 +74,7 @@ namespace API.Controllers
             return Ok(data);
         }
 
+        // need pagination
         [HttpGet("Users")]
         public async Task<ActionResult<List<UsersOutput>>> GetUsers() =>
             Ok(_mapper.Map<List<User>, List<UsersOutput>>(await _dashboardService.GetUsers()));
@@ -171,14 +174,23 @@ namespace API.Controllers
         public async Task<ActionResult<RoleOutput>> GetRoleByNameAsync(string name) =>
             Ok(_mapper.Map<Role, RoleOutput>(await _dashboardService.GetRoleByNameAsync(name)));
 
-        [HttpGet("AllRoles")]
-        public async Task<List<RoleOutput>> GetAllRoles() =>
-            _mapper.Map<List<Role>, List<RoleOutput>>(await _dashboardService.GetRolesAsync());
+        [HttpPost("AllRoles")]
+        public async Task<List<RoleOutput>> GetAllRoles(RoleParams roleParams)
+        {
+            var roles = await _dashboardService.GetRolesAsync(roleParams);
+            Response.AddPagination(roles.CurrentPage, roles.ItemsPerPage, roles.TotalItems, roles.TotalPages);
+            return _mapper.Map<List<Role>, List<RoleOutput>>(roles);
+        }
 
-        [HttpGet("ShowReportedMessages")]
-        public async Task<ActionResult<List<ReportMessageForDashboard>>> ShowReportedMessages() =>
-            Ok(_mapper.Map<List<ReportMessage>, List<ReportMessageForDashboard>>(await _dashboardService.ShowReportedMessages()));
+        [HttpPost("ShowReportedMessages")]
+        public async Task<ActionResult<List<ReportMessageForDashboard>>> ShowReportedMessages(ReportMessageParams messageParam)
+        {
+            var messages =await _dashboardService.ShowReportedMessages(messageParam);
+            Response.AddPagination(messages.CurrentPage, messages.ItemsPerPage, messages.TotalItems, messages.TotalPages);
+            return Ok(_mapper.Map<List<ReportMessage>, List<ReportMessageForDashboard>>(messages));
+        }
 
+        // need pagination
         [HttpGet("ShowReportedMessage/{messageId}")]
         public async Task<ActionResult<List<ReportMessageForDashboard>>> ShowReportedMessage(int messageId) =>
             Ok(_mapper.Map<List<ReportMessage>, List<ReportMessageForDashboard>>(await _dashboardService.ShowReportedMessage(messageId)));

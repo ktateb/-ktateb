@@ -76,7 +76,8 @@ namespace DAL.Repositories
 
         public async Task<List<Role>> GetRolesAsync() =>
             await _roleManager.Roles.ToListAsync();
-
+        public IQueryable<Role> GetRolesQuery() =>
+             _roleManager.Roles.AsQueryable<Role>();
         public async Task<User> GetUserByEmailAsync(string email) =>
             await _userManager.FindByEmailAsync(email);
 
@@ -175,6 +176,7 @@ namespace DAL.Repositories
         public Task<Role> GetRoleByIdAsync(string id);
         public Task<Role> GetRoleByNameAsync(string name);
         public Task<List<Role>> GetRolesAsync();
+        public IQueryable<Role> GetRolesQuery();
         public Task<bool> CreateRoleAsync(Role inputRole);
         public Task<bool> UpdateRoleAsync(Role inputRole);
         public Task<bool> DeleteRoleByIdAsync(string id);

@@ -7,7 +7,7 @@ namespace Model.Course.Inputs
     {
         public int Id { get; set; }
         [Required]
-        public string title { get; set; }
+        public string Title { get; set; }
         [Required]
         public string Description { get; set; }
         public string LearnListDescription { get; set; }
@@ -19,7 +19,7 @@ namespace Model.Course.Inputs
     {
         public CourseUpdateInputValidator()
         {
-            RuleFor(x => x.title)
+            RuleFor(x => x.Title)
                 .NotEmpty().WithMessage("Please enter the  Course title");
             RuleFor(x => x.Description)
                .NotEmpty().WithMessage("Please put Description for this Course");

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Controllers.Common;
+using API.Helpers;
 using AutoMapper;
 using DAL.Entities.Messages;
 using Microsoft.AspNetCore.Authorization;
@@ -34,8 +35,9 @@ namespace API.Controllers
                 return Unauthorized("User is Unauthorized");
             if (user.Id == messageParams.UserReciverId)
                 return BadRequest(@"You can't get your messages with yourself");
-
-            return Ok(_mapper.Map<List<Message>, List<MessageOutput>>(await _messageRepository.GetMessages(user.Id, messageParams)));
+            var messages = await _messageRepository.GetMessages(user.Id, messageParams);
+            Response.AddPagination(messages.CurrentPage, messages.ItemsPerPage, messages.TotalItems, messages.TotalPages);
+            return Ok(_mapper.Map<List<Message>, List<MessageOutput>>(messages));
         }
 
         [HttpDelete("DeleteMessageForAll/{id}")]

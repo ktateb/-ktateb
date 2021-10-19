@@ -15,9 +15,9 @@ namespace Services
             _ICourseSectionRepository = ICourseSectionRepository;
             _ICourseVedioRepository = ICourseVedioRepository;
         }
-        public async Task<CourseSection> getSectionAsync(int Id) =>
+        public async Task<CourseSection> GetSectionAsync(int Id) =>
             await _ICourseSectionRepository.GetQuery().Where(c => c.Id == Id).FirstOrDefaultAsync();
-        public async Task<List<CourseVedio>> getVediosInfoAsync(int SectionId) =>
+        public async Task<List<CourseVedio>> GetVediosInfoAsync(int SectionId) =>
             await _ICourseVedioRepository.GetQuery().Where(c => c.SectionId == SectionId).OrderBy(c => c.VedioTitle).ToListAsync();
         public async Task<bool> CreateSectionInfoAsync(CourseSection Section) =>
             await _ICourseSectionRepository.CreateAsync(Section);
@@ -34,8 +34,8 @@ namespace Services
     }
     public interface ICourseSectionService
     {
-        public Task<CourseSection> getSectionAsync(int Id);
-        public Task<List<CourseVedio>> getVediosInfoAsync(int SectionId);
+        public Task<CourseSection> GetSectionAsync(int Id);
+        public Task<List<CourseVedio>> GetVediosInfoAsync(int SectionId);
         public Task<bool> CreateSectionInfoAsync(CourseSection Section);
         public  Task<int> GetCourseIdAsync(int SectionId);
         public Task<int> GetTeacerIdAsync(int SectionId);

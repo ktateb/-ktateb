@@ -13,7 +13,7 @@ namespace Services.Profiles
         public CourseProfile()
         {
             CreateMap<CourseCreateInput, Course>()
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.title))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.OverViewDescription, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.LearnListDescription, opt => opt.MapFrom(src => src.LearnListDescription))
                 .ForMember(dest => dest.ThisCourseFor, opt => opt.MapFrom(src => src.ThisCourseFor))
@@ -22,7 +22,7 @@ namespace Services.Profiles
 
             CreateMap<CourseUpdateInput, Course>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.title))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.OverViewDescription, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.LearnListDescription, opt => opt.MapFrom(src => src.LearnListDescription))
                 .ForMember(dest => dest.ThisCourseFor, opt => opt.MapFrom(src => src.ThisCourseFor))
@@ -31,7 +31,7 @@ namespace Services.Profiles
 
             CreateMap<Course, CourseOutput>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.title, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.OverViewDescription))
                 .ForMember(dest => dest.LearnListDescription, opt => opt.MapFrom(src => src.LearnListDescription))
                 .ForMember(dest => dest.ThisCourseFor, opt => opt.MapFrom(src => src.ThisCourseFor))

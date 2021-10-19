@@ -39,7 +39,7 @@ namespace API.Controllers
         [HttpGet("{Id}/Sections")]
         public async Task<ActionResult<List<CourseSectionOutput>>> GetCourseSection(int Id)
         {
-            if (!(await _CourseService.isExistAsync(Id)))
+            if (!(await _CourseService.IsExistAsync(Id)))
             {
                 return NotFound("Course not found");
             }
@@ -62,13 +62,13 @@ namespace API.Controllers
         [HttpPost("Update")]
         public async Task<ActionResult> Update(CourseUpdateInput CourseInput)
         {
-            var CoursetecherIdTask = _CourseService.getTeacherIdOrDefultAsync(CourseInput.Id);
+            var CoursetecherIdTask = _CourseService.GetTeacherIdOrDefultAsync(CourseInput.Id);
             var createdateTask = _CourseService.GetCourseCreatedDateCourseAsync(CourseInput.Id);
             var AuthtecherIdTask = _TeacherService.GetTeacherIdOrDefaultAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).Id);
 
             var CoursetecherId = await CoursetecherIdTask;
             var AuthtecherId = await AuthtecherIdTask;
-            if (CoursetecherId == default(int))
+            if (CoursetecherId == default)
             {
                 return NotFound("Course not found");
             }
@@ -89,12 +89,12 @@ namespace API.Controllers
         public async Task<ActionResult> Delete(int Id)
         {
 
-            var CoursetecherIdTask = _CourseService.getTeacherIdOrDefultAsync(Id);
+            var CoursetecherIdTask = _CourseService.GetTeacherIdOrDefultAsync(Id);
             var AuthtecherIdTask = _TeacherService.GetTeacherIdOrDefaultAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).Id);
             var HasStudentTask= _CourseService.HasStudentAsync(Id);
             var CoursetecherId = await CoursetecherIdTask;
             var AuthtecherId = await AuthtecherIdTask;
-            if (default(int) == CoursetecherId)
+            if (default == CoursetecherId)
             {
                 return NotFound("Course not found");
             }

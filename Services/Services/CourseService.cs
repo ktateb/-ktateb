@@ -12,9 +12,9 @@ namespace Services
 {
     public class CourseService : ICourseService
     {
-        private IGenericRepository<Course> _iCourseRepository;
-        private IGenericRepository<CourseSection> _iCourseSectionRepository;
-        private IGenericRepository<StudentCourse> _iStudentCourseRepository;
+        private readonly IGenericRepository<Course> _iCourseRepository;
+        private readonly IGenericRepository<CourseSection> _iCourseSectionRepository;
+        private readonly IGenericRepository<StudentCourse> _iStudentCourseRepository;
         public CourseService(IGenericRepository<StudentCourse> iStudentCourseRepository, IGenericRepository<Course> iCourseRepository, IGenericRepository<CourseSection> iCourseSectionRepository)
         {
             _iStudentCourseRepository = iStudentCourseRepository;
@@ -35,10 +35,10 @@ namespace Services
         public async Task<bool> UpdateCourseInfoAsync(Course Course) =>
            await _iCourseRepository.UpdateAsync(Course);
 
-        public async Task<bool> isExistAsync(int Id) =>
+        public async Task<bool> IsExistAsync(int Id) =>
           await _iCourseRepository.GetQuery().Where(c => c.Id == Id).AnyAsync();
 
-        public async Task<int> getTeacherIdOrDefultAsync(int CourseId) =>
+        public async Task<int> GetTeacherIdOrDefultAsync(int CourseId) =>
            await _iCourseRepository.GetQuery().Where(c=>c.Id==CourseId).Select(c =>c.TeacherId).FirstOrDefaultAsync();
 
         public async Task<DateTime> GetCourseCreatedDateCourseAsync(int Id)=>
@@ -46,9 +46,9 @@ namespace Services
     }
     public interface ICourseService
     {
-        public Task<bool> isExistAsync(int Id);
+        public Task<bool> IsExistAsync(int Id);
         public Task<DateTime> GetCourseCreatedDateCourseAsync(int Id);
-        public Task<int> getTeacherIdOrDefultAsync(int CourseId);
+        public Task<int> GetTeacherIdOrDefultAsync(int CourseId);
         public Task<Course> GetCourseInfoAsync(int Id);
 
         public Task<List<CourseSection>> GetCourseSectionAsync(int Course);

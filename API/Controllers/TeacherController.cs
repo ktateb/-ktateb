@@ -43,7 +43,7 @@ namespace API.Controllers
         public async Task<ActionResult> Update(TeacherUpdateInput teacher)
         {
             var techerid = await _ITeacherService.GetTeacherIdOrDefaultAsync((await _IAccountService.GetUserByUserClaim(HttpContext.User)).Id);
-            if (default(int) == techerid)
+            if (default == techerid)
                 return Unauthorized();
             var teacherToUpdate = _Mapper.Map<TeacherUpdateInput, Teacher>(teacher);
             teacherToUpdate.Id = techerid;

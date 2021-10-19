@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DAL.Entities.Messages;
 using DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Model.Helper;
 using Model.Message.Inputs;
 
 namespace Services
@@ -27,22 +28,22 @@ namespace Services
         public async Task<Message> GetMessage(int id) =>
             await _messageRepository.FindAsync(id);
 
-        public async Task<List<Message>> GetMessages(string userId, MessageParam messageParamss)
+        public async Task<PagedList<Message>> GetMessages(string userId, MessageParam messageParams)
         {
             var query = _messageRepository.GetQuery()
-                .Where(x => (x.SenderId == userId && x.ReciverId == messageParamss.UserReciverId) ||
-                 (x.SenderId == messageParamss.UserReciverId && x.ReciverId == userId))
+                .Where(x => (x.SenderId == userId && x.ReciverId == messageParams.UserReciverId) ||
+                 (x.SenderId == messageParams.UserReciverId && x.ReciverId == userId))
                  .OrderBy(x => x.DateSent)
                 .AsQueryable();
 
-            if (messageParamss.IsDeleted != null)
-                query = query.Where(x => x.IsDeleted == messageParamss.IsDeleted);
-            if (messageParamss.RecipentDeleted != null)
-                query = query.Where(x => x.RecipentDeleted == messageParamss.RecipentDeleted);
-            if (messageParamss.SenderDeleted != null)
-                query = query.Where(x => x.SenderDeleted == messageParamss.SenderDeleted);
+            if (messageParams.IsDeleted != null)
+                query = query.Where(x => x.IsDeleted == messageParams.IsDeleted);
+            if (messageParams.RecipentDeleted != null)
+                query = query.Where(x => x.RecipentDeleted == messageParams.RecipentDeleted);
+            if (messageParams.SenderDeleted != null)
+                query = query.Where(x => x.SenderDeleted == messageParams.SenderDeleted);
 
-            return await query.ToListAsync();
+            return await PagedList<Message>.CreatePagingListAsync(query, messageParams.PageNumber, messageParams.PageSize);
         }
 
         public async Task<bool> SendMessage(Message message) =>
@@ -61,7 +62,7 @@ namespace Services
     public interface IMessageService
     {
         public Task<Message> GetMessage(int id);
-        public Task<List<Message>> GetMessages(string userId, MessageParam messageParamsss);
+        public Task<PagedList<Message>> GetMessages(string userId, MessageParam messageParams);
         public Task<bool> UpdateMessage(Message message);
         public Task<bool> DeleteMessageForAll(int id);
         public Task<bool> DeleteMessageForMe(int id);

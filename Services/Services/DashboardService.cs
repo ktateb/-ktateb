@@ -11,6 +11,9 @@ using DAL.Entities.Messages;
 using DAL.Entities.Reports;
 using DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Model.Helper;
+using Model.Report.Message.Inputs;
+using Model.Role.Inputs;
 using Model.User.Inputs;
 
 namespace Services
@@ -192,11 +195,17 @@ namespace Services
         public async Task<Role> GetRoleByNameAsync(string name) =>
             await _identityRepository.GetRoleByNameAsync(name);
 
-        public async Task<List<Role>> GetRolesAsync() =>
-            await _identityRepository.GetRolesAsync();
+        public async Task<PagedList<Role>> GetRolesAsync(RoleParams roleParams)
+        {
+            var roles = _identityRepository.GetRolesQuery();
+            return await PagedList<Role>.CreatePagingListAsync(roles, roleParams.PageNumber, roleParams.PageSize);
+        }
 
-        public async Task<List<ReportMessage>> ShowReportedMessages() =>
-            await _reportMessageRepository.GetQuery().Include(us => us.UserSendReport).Include(x => x.Message).ThenInclude(x => x.Sender).ToListAsync();
+        public async Task<PagedList<ReportMessage>> ShowReportedMessages(ReportMessageParams reportParams)
+        {
+            var messages = _reportMessageRepository.GetQuery().Include(us => us.UserSendReport).Include(x => x.Message).ThenInclude(x => x.Sender);
+            return await PagedList<ReportMessage>.CreatePagingListAsync(messages , reportParams.PageNumber , reportParams.PageSize);
+        }
 
         public async Task<List<ReportMessage>> ShowReportedMessage(int id) =>
             await _reportMessageRepository.GetQuery().Where(x => x.MessageId == id).Include(us => us.UserSendReport).Include(x => x.Message).ThenInclude(x => x.Sender).ToListAsync();
@@ -251,8 +260,8 @@ namespace Services
         public Task<bool> DeleteRoleInUser(User user, string role);
         public Task<Role> GetRoleByIdAsync(string id);
         public Task<Role> GetRoleByNameAsync(string name);
-        public Task<List<Role>> GetRolesAsync();
-        public Task<List<ReportMessage>> ShowReportedMessages();
+        public Task<PagedList<Role>> GetRolesAsync(RoleParams roleParams);
+        public Task<PagedList<ReportMessage>> ShowReportedMessages(ReportMessageParams reportParams);
         public Task<List<ReportMessage>> ShowReportedMessage(int id);
         public Task<List<ReportComment>> ShowReportedComments();
         public Task<List<ReportComment>> ShowReportedComment(int id);
