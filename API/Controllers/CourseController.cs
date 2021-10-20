@@ -18,7 +18,7 @@ namespace API.Controllers
         private readonly IAccountService _accountService;
         private readonly ITeacherService _TeacherService;
         private readonly IMapper _mapper;
-        public CourseController(CourseService CourseService, IAccountService accountService, ITeacherService TeacherService, IMapper mapper)
+        public CourseController(ICourseService CourseService, IAccountService accountService, ITeacherService TeacherService, IMapper mapper)
         {
             _accountService = accountService;
             _CourseService = CourseService;
@@ -100,9 +100,9 @@ namespace API.Controllers
             }
             if (CoursetecherId != AuthtecherId)
             {
-                return Unauthorized();
-            }
-            if (! await HasStudentTask)
+                return Unauthorized("You are not the Owner of this course");
+            } 
+            if (await HasStudentTask)
             {
                 return BadRequest("this course Has Students");
             }

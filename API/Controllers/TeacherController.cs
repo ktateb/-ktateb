@@ -18,8 +18,8 @@ namespace API.Controllers
         private readonly ICourseService _ICourseService;
         private readonly ITeacherService _ITeacherService;
         private readonly IAccountService _IAccountService;
-        private readonly Mapper _Mapper;
-        public TeacherController(ICourseService CourseService, ITeacherService TeacherService, IAccountService AccountService, Mapper mapper)
+        private readonly IMapper _Mapper;
+        public TeacherController(ICourseService CourseService, ITeacherService TeacherService, IAccountService AccountService, IMapper mapper)
         {
             _ICourseService = CourseService;
             _ITeacherService = TeacherService;
@@ -42,11 +42,13 @@ namespace API.Controllers
         [HttpPost("Update")]
         public async Task<ActionResult> Update(TeacherUpdateInput teacher)
         {
-            var techerid = await _ITeacherService.GetTeacherIdOrDefaultAsync((await _IAccountService.GetUserByUserClaim(HttpContext.User)).Id);
+            var userId=(await _IAccountService.GetUserByUserClaim(HttpContext.User)).Id;
+            var techerid = await _ITeacherService.GetTeacherIdOrDefaultAsync(userId);
             if (default == techerid)
                 return Unauthorized();
-            var teacherToUpdate = _Mapper.Map<TeacherUpdateInput, Teacher>(teacher);
+            var teacherToUpdate = _Mapper.Map<TeacherUpdateInput, Teacher>(teacher); 
             teacherToUpdate.Id = techerid;
+            teacherToUpdate.UserId=userId;
             if (await _ITeacherService.UpdateTeacherInfoAsync(teacherToUpdate))
                 return Ok("Done");
             return BadRequest();

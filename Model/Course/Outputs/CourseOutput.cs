@@ -9,8 +9,8 @@ namespace Model.Course.Outputs
         public string ThisCourseFor { get; set; }
         public string PreRequerment { get; set; }
         public int CategoryId { get; set; }
-        public int CategoryName{ get; set; }
-        public int TeacherUserName { get; set; }
-        public int TeacherDisplayrName { get; set; }
+        public string CategoryName{ get; set; }
+        public string TeacherUserName { get; set; }
+        public string TeacherDisplayrName { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace API.Controllers
         private readonly IAccountService _accountService;
         private readonly ITeacherService _TeacherService;
         private readonly IMapper _mapper;
-        public CourseSectionController(CourseService CourseService, ICourseSectionService CourseSectionService, IAccountService accountService, ITeacherService TeacherService, IMapper mapper)
+        public CourseSectionController(ICourseService CourseService, ICourseSectionService CourseSectionService, IAccountService accountService, ITeacherService TeacherService, IMapper mapper)
         {
             _accountService = accountService;
             _CourseSectionService = CourseSectionService;
