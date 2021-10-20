@@ -19,6 +19,7 @@ namespace Services.Profiles
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.CommentText, opt => opt.MapFrom(src => src.Text))
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.DateComment))
+                .ForMember(dest => dest.IsEdited, opt => opt.MapFrom(src => src.IsUpdated))
                 .ForMember(dest => dest.UserDisplayName, opt => opt.MapFrom(src => src.User.FullName))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
                 .ForMember(dest => dest.UserPictureUrl, opt => opt.MapFrom(src => src.User.PictureUrl));
