@@ -1,18 +1,17 @@
-using System;
 using System.ComponentModel.DataAnnotations;
-
 using FluentValidation;
+
 namespace Model.Comment.Inputs
 {
-    public class CommentCreateInput
+    public class CommentUpdateInput
     {
-        public int CourseId { get; set; }
+        public int Id { get; set; }
         [Required]
         public string CommentText { get; set; }
     }
-    public class CommentCreateInputValidator : AbstractValidator<CommentCreateInput>
+    public class CommentUpdateInputValidator : AbstractValidator<CommentUpdateInput>
     {
-        public CommentCreateInputValidator()
+        public CommentUpdateInputValidator()
         {
             RuleFor(x => x.CommentText)
                 .NotEmpty().WithMessage("Please enter the  Comment");

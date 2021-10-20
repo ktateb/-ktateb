@@ -26,7 +26,7 @@ namespace DAL.Entities.Courses
         public virtual ICollection<CourseSection> CourseSections { get; set; }
         public virtual ICollection<StudentCourse> Students { get; set; }
         public virtual ICollection<Rating> Ratings { get; set; }
-        public virtual ICollection<Comment> Comments { get; set; }
+        public virtual List<Comment> Comments { get; set; }
         public virtual ICollection<ReportCourse> ReportList { get; set; }
         public virtual ICollection<StudentFavoriteCourse> FavoriteByList { get; set; }
     }

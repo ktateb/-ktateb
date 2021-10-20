@@ -7,6 +7,8 @@ using DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 using DAL.Entities.StudentCourses;
 using System;
+using DAL.Entities.Comments;
+using Model.Helper;
 
 namespace Services
 {
@@ -15,11 +17,14 @@ namespace Services
         private readonly IGenericRepository<Course> _iCourseRepository;
         private readonly IGenericRepository<CourseSection> _iCourseSectionRepository;
         private readonly IGenericRepository<StudentCourse> _iStudentCourseRepository;
-        public CourseService(IGenericRepository<StudentCourse> iStudentCourseRepository, IGenericRepository<Course> iCourseRepository, IGenericRepository<CourseSection> iCourseSectionRepository)
+
+        private readonly IGenericRepository<Comment> _iCommentRepository;
+        public CourseService(IGenericRepository<Comment> iCommentRepository,IGenericRepository<StudentCourse> iStudentCourseRepository, IGenericRepository<Course> iCourseRepository, IGenericRepository<CourseSection> iCourseSectionRepository)
         {
             _iStudentCourseRepository = iStudentCourseRepository;
             _iCourseRepository = iCourseRepository;
             _iCourseSectionRepository = iCourseSectionRepository;
+            _iCommentRepository=iCommentRepository;
         }
 
         public async Task<Course> GetCourseInfoAsync(int Id) =>
@@ -39,13 +44,21 @@ namespace Services
           await _iCourseRepository.GetQuery().Where(c => c.Id == Id).AnyAsync();
 
         public async Task<int> GetTeacherIdOrDefultAsync(int CourseId) =>
-           await _iCourseRepository.GetQuery().Where(c=>c.Id==CourseId).Select(c =>c.TeacherId).FirstOrDefaultAsync();
+           await _iCourseRepository.GetQuery().Where(c => c.Id == CourseId).Select(c => c.TeacherId).FirstOrDefaultAsync();
 
-        public async Task<DateTime> GetCourseCreatedDateCourseAsync(int Id)=>
-            await _iCourseRepository.GetQuery().Select(c=>c.CreatedDate).FirstOrDefaultAsync();
+        public async Task<DateTime> GetCourseCreatedDateCourseAsync(int Id) =>
+            await _iCourseRepository.GetQuery().Select(c => c.CreatedDate).FirstOrDefaultAsync();
+        public async Task<List<Comment>> GetCommentsAsync(int CourseId) =>
+            await _iCourseRepository.GetQuery().Where(s => s.Id == CourseId).Include(c => c.Comments).ThenInclude(s => s.User).Select(c => c.Comments).FirstOrDefaultAsync();
+        public async Task<PagedList<Comment>> GetCommentsAsync(int CourseId, Paging Params)
+        {
+            var q =  _iCommentRepository.GetQuery().Where(c => c.CourseId == CourseId).Include(s => s.User).OrderByDescending(c => c.DateComment);
+            return await PagedList<Comment>.CreatePagingListAsync(q, Params.PageNumber, Params.PageSize);
+        }
     }
     public interface ICourseService
     {
+        public Task<PagedList<Comment>> GetCommentsAsync(int CourseId, Paging Params);
         public Task<bool> IsExistAsync(int Id);
         public Task<DateTime> GetCourseCreatedDateCourseAsync(int Id);
         public Task<int> GetTeacherIdOrDefultAsync(int CourseId);

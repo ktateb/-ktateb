@@ -1,13 +1,17 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Controllers.Common;
+using API.Helpers;
 using AutoMapper;
+using DAL.Entities.Comments;
 using DAL.Entities.Courses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Model.Comment.Outputs;
 using Model.Course.Inputs;
 using Model.Course.Outputs;
 using Model.CourseSection.Outputs;
+using Model.Helper;
 using Services;
 
 namespace API.Controllers
@@ -44,6 +48,13 @@ namespace API.Controllers
                 return NotFound("Course not found");
             }
             return Ok(_mapper.Map<List<CourseSection>, List<CourseSectionOutput>>(await _CourseService.GetCourseSectionAsync(Id)));
+        }
+        [HttpPost("{Id}/Comments")]
+        public async Task<List<CommentOutput>> Get(int Id, Paging Params)
+        {
+            var comments = await _CourseService.GetCommentsAsync(Id, Params);
+            Response.AddPagination(comments.CurrentPage, comments.ItemsPerPage, comments.TotalItems, comments.TotalPages);
+            return _mapper.Map<List<Comment>, List<CommentOutput>>(comments);
         }
         [Authorize(Roles = "Teacher")]
         [HttpPost("Create")]
@@ -91,7 +102,7 @@ namespace API.Controllers
 
             var CoursetecherIdTask = _CourseService.GetTeacherIdOrDefultAsync(Id);
             var AuthtecherIdTask = _TeacherService.GetTeacherIdOrDefaultAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).Id);
-            var HasStudentTask= _CourseService.HasStudentAsync(Id);
+            var HasStudentTask = _CourseService.HasStudentAsync(Id);
             var CoursetecherId = await CoursetecherIdTask;
             var AuthtecherId = await AuthtecherIdTask;
             if (default == CoursetecherId)
@@ -101,7 +112,7 @@ namespace API.Controllers
             if (CoursetecherId != AuthtecherId)
             {
                 return Unauthorized("You are not the Owner of this course");
-            } 
+            }
             if (await HasStudentTask)
             {
                 return BadRequest("this course Has Students");
@@ -109,6 +120,6 @@ namespace API.Controllers
             if (await _CourseService.DeleteCourseAsync(Id))
                 return Ok("Done");
             return BadRequest();
-        } 
+        }
     }
 }

@@ -54,7 +54,9 @@ namespace API
             services.AddAutoMapper(typeof(CategoryProfile));
             services.AddAutoMapper(typeof(CourseProfile)); 
             services.AddAutoMapper(typeof(CourseSectionProfile)); 
-            services.AddAutoMapper(typeof(TeacherProfile));
+            services.AddAutoMapper(typeof(TeacherProfile)); 
+            services.AddAutoMapper(typeof(CommentProfile)); 
+            services.AddAutoMapper(typeof(SubCommentProfile));
             #endregion
 
             services.AddControllers();
@@ -87,13 +89,12 @@ namespace API
             #endregion
 
             #region Dependency Injection
-            //ahmad Services
-            services.AddScoped(typeof(IGenericRepository<Message>), typeof(GenericRepository<Message>));
-            services.AddScoped(typeof(IGenericRepository<Comment>), typeof(GenericRepository<Comment>));
+
+            //// ahmad Services
+            services.AddScoped(typeof(IGenericRepository<Message>), typeof(GenericRepository<Message>)); 
             services.AddScoped(typeof(IGenericRepository<ReportCourse>), typeof(GenericRepository<ReportCourse>));
             services.AddScoped(typeof(IGenericRepository<ReportComment>), typeof(GenericRepository<ReportComment>));
-            services.AddScoped(typeof(IGenericRepository<ReportSubComment>), typeof(GenericRepository<ReportSubComment>));
-            services.AddScoped(typeof(IGenericRepository<SubComment>), typeof(GenericRepository<SubComment>));
+            services.AddScoped(typeof(IGenericRepository<ReportSubComment>), typeof(GenericRepository<ReportSubComment>)); 
             services.AddScoped(typeof(IGenericRepository<ReportUser>), typeof(GenericRepository<ReportUser>));
             services.AddScoped(typeof(IGenericRepository<ReportMessage>), typeof(GenericRepository<ReportMessage>));
             services.AddScoped(typeof(IGenericRepository<Country>), typeof(GenericRepository<Country>));
@@ -105,18 +106,23 @@ namespace API
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ICountryService, CountryService>();
             services.AddScoped<IMessageService, MessageService>();
-            services.AddScoped<ITokenService, TokenService>(); 
-            ////////sarya Services
-            services.AddScoped<ICategoryServices, CategoryServices>();
-            services.AddScoped<ICourseService, CourseService>();
-            services.AddScoped<ICourseSectionService, CourseSectionService>(); 
-            services.AddScoped<ITeacherService, TeacherService>(); 
+            services.AddScoped<ITokenService, TokenService>();
+            ///// sarya Services
             services.AddScoped(typeof(IGenericRepository<Teacher>), typeof(GenericRepository<Teacher>));
             services.AddScoped(typeof(IGenericRepository<Category>), typeof(GenericRepository<Category>));
             services.AddScoped(typeof(IGenericRepository<Course>), typeof(GenericRepository<Course>));
             services.AddScoped(typeof(IGenericRepository<CourseSection>), typeof(GenericRepository<CourseSection>));
             services.AddScoped(typeof(IGenericRepository<CourseVedio>), typeof(GenericRepository<CourseVedio>)); 
-            services.AddScoped(typeof(IGenericRepository<StudentCourse>), typeof(GenericRepository<StudentCourse>)); 
+            services.AddScoped(typeof(IGenericRepository<StudentCourse>), typeof(GenericRepository<StudentCourse>));  
+            services.AddScoped(typeof(IGenericRepository<Comment>), typeof(GenericRepository<Comment>)); 
+            services.AddScoped(typeof(IGenericRepository<SubComment>), typeof(GenericRepository<SubComment>));
+            services.AddScoped<ICategoryServices, CategoryServices>();
+            services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<ICourseSectionService, CourseSectionService>(); 
+            services.AddScoped<ITeacherService, TeacherService>(); 
+            services.AddScoped<ICommentService, CommentService>();  
+            services.AddScoped<ISubCommentService, SubCommentService>();
+            /////
             services.AddIdentityServices(_configuration);
             #endregion
 
