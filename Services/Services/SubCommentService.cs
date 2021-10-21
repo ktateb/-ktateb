@@ -40,14 +40,14 @@ namespace Services
             SubComment.CommentId = com.CommentId;
             return await _SubCommentrepository.UpdateAsync(SubComment);
         }
-        public async Task<bool> isTheOwner(string userid, int SubCommentId) =>
+        public async Task<bool> IsTheOwner(string userid, int SubCommentId) =>
             (await GetUserIdOrDefultAsync(SubCommentId)).Equals(userid);
 
     }
     public interface ISubCommentService
     {
         public Task<string> GetUserIdOrDefultAsync(int Id);
-        public Task<bool> isTheOwner(string userid, int SubCommentId);
+        public Task<bool> IsTheOwner(string userid, int SubCommentId);
         public Task<SubComment> GetSubCommmnetAsync(int Id);
         public Task<bool> CreateAsync(SubComment SubComment);
         public Task<bool> UpdateAsync(SubComment SubComment);

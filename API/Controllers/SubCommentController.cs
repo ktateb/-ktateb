@@ -45,11 +45,11 @@ namespace API.Controllers
 
         [Authorize]
         [HttpPost("update")]
-        public async Task<ActionResult> update(SubCommentUpdateInput comment)
+        public async Task<ActionResult> Update(SubCommentUpdateInput comment)
         {
             var userTask = _accountService.GetUserByUserClaim(HttpContext.User);
             var commentToCreate = _mapper.Map<SubCommentUpdateInput, SubComment>(comment);
-            if (!await _isubCommentService.isTheOwner((await userTask).Id, comment.Id))
+            if (!await _isubCommentService.IsTheOwner((await userTask).Id, comment.Id))
             {
                 return Unauthorized();
             }
@@ -62,7 +62,7 @@ namespace API.Controllers
         public async Task<ActionResult> Delete(int Id)
         {
             var userTask = _accountService.GetUserByUserClaim(HttpContext.User);
-            if (!await _isubCommentService.isTheOwner((await userTask).Id, Id))
+            if (!await _isubCommentService.IsTheOwner((await userTask).Id, Id))
             {
                 return Unauthorized();
             }

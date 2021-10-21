@@ -15,41 +15,39 @@ namespace API.Controllers
 {
     public class TeacherController : BaseController
     {
-        private readonly ICourseService _ICourseService;
-        private readonly ITeacherService _ITeacherService;
-        private readonly IAccountService _IAccountService;
-        private readonly IMapper _Mapper;
-        public TeacherController(ICourseService CourseService, ITeacherService TeacherService, IAccountService AccountService, IMapper mapper)
+        private readonly ITeacherService _teacherService;
+        private readonly IAccountService _accountService;
+        private readonly IMapper _mapper;
+        public TeacherController(ITeacherService teacherService, IAccountService accountService, IMapper mapper)
         {
-            _ICourseService = CourseService;
-            _ITeacherService = TeacherService;
-            _IAccountService = AccountService;
-            _Mapper = mapper;
+            _teacherService = teacherService;
+            _accountService = accountService;
+            _mapper = mapper;
         }
         [HttpGet("{UserName}")]
         public async Task<ActionResult<TeacherOutput>> GetTeacherInfo(string UserName)
         {
-            var teacher = await _ITeacherService.GetTeacherInfoAsync(UserName);
+            var teacher = await _teacherService.GetTeacherInfoAsync(UserName);
             if (teacher == null)
                 return NotFound("no Teacher with " + UserName + " UserName found");
-            return Ok(_Mapper.Map<Teacher, TeacherOutput>(teacher));
+            return Ok(_mapper.Map<Teacher, TeacherOutput>(teacher));
         }
         [HttpGet("{UserName}/Courses")]
         public async Task<List<TeacherCourseOutput>> GetTeacherCourses(string UserName) =>
-            _Mapper.Map<List<Course>, List<TeacherCourseOutput>>(await _ITeacherService.GetTeacherCoursesAsync(UserName));
+            _mapper.Map<List<Course>, List<TeacherCourseOutput>>(await _teacherService.GetTeacherCoursesAsync(UserName));
 
         [Authorize(Roles = "Teacher")]
         [HttpPost("Update")]
         public async Task<ActionResult> Update(TeacherUpdateInput teacher)
         {
-            var userId=(await _IAccountService.GetUserByUserClaim(HttpContext.User)).Id;
-            var techerid = await _ITeacherService.GetTeacherIdOrDefaultAsync(userId);
+            var userId=(await _accountService.GetUserByUserClaim(HttpContext.User)).Id;
+            var techerid = await _teacherService.GetTeacherIdOrDefaultAsync(userId);
             if (default == techerid)
                 return Unauthorized();
-            var teacherToUpdate = _Mapper.Map<TeacherUpdateInput, Teacher>(teacher); 
+            var teacherToUpdate = _mapper.Map<TeacherUpdateInput, Teacher>(teacher); 
             teacherToUpdate.Id = techerid;
             teacherToUpdate.UserId=userId;
-            if (await _ITeacherService.UpdateTeacherInfoAsync(teacherToUpdate))
+            if (await _teacherService.UpdateTeacherInfoAsync(teacherToUpdate))
                 return Ok("Done");
             return BadRequest();
         }

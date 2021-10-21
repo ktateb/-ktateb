@@ -1,24 +1,35 @@
 [
-    {
-      "UserName": "AhmadNour",
-      "Email": "Ahmad@gmail.com",
-      "Password": "Pa$$w0rd",
-      "EmailConfirmed": "True",
-      "PhoneNumber": "0949151627",
-      "FirstName": "Ahmad Nour",
-      "LastName": "Al-Sabaggh",
-      "Gender": "Male",
-      "Country":"Syria"
-    },
-    {
-      "UserName": "SaryaTulaimat",
-      "Email": "sarya.tulaimat@outlook.com",
-      "Password": "Pa$$w0rd",
-      "EmailConfirmed": "True",
-      "PhoneNumber": "0952713953",
-      "FirstName": "Mohammad Sarya",
-      "LastName": "Tulaimat",
-      "Gender": "Male",
-      "Country":"Syria"
-    }    
-  ]
+  {
+    "UserName": "AhmadNour",
+    "Email": "Ahmad.Nour.AlSabaggh@gmail.com",
+    "Password": "Pa$$w0rd",
+    "EmailConfirmed": "True",
+    "PhoneNumber": "0949151627",
+    "FirstName": "Ahmad Nour",
+    "LastName": "Al-Sabaggh",
+    "Gender": "Male",
+    "Country": "Syria"
+  },
+  {
+    "UserName": "SaryaTulaimat",
+    "Email": "sarya.tulaimat@outlook.com",
+    "Password": "Pa$$w0rd",
+    "EmailConfirmed": "True",
+    "PhoneNumber": "0952713953",
+    "FirstName": "Mohammad Sarya",
+    "LastName": "Tulaimat",
+    "Gender": "Male",
+    "Country": "Syria"
+  },
+  {
+    "UserName": "hussam",
+    "Email": "hmb.new@gmail.com",
+    "Password": "Pa$$w0rd",
+    "EmailConfirmed": "True",
+    "PhoneNumber": "0990416940",
+    "FirstName": "Hussam",
+    "LastName": "Bashat",
+    "Gender": "Male",
+    "Country": "Syria"
+  }
+]

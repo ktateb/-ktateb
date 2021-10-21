@@ -49,7 +49,7 @@ namespace Services
         public async Task<String> GetUserIdOrDefultAsync(int Id) =>
             await _commentrepository.GetQuery().Where(c => c.Id == Id).Select(c => c.UserId).FirstOrDefaultAsync();
 
-        public async Task<bool> isTheOwner(String userid,int CommentId)=>
+        public async Task<bool> IsTheOwner(String userid,int CommentId)=>
              (await GetUserIdOrDefultAsync(CommentId)).Equals(userid); 
 
 
@@ -57,7 +57,7 @@ namespace Services
     public interface ICommentService
     { 
         public Task<String> GetUserIdOrDefultAsync(int Id);
-        public Task<bool> isTheOwner(String userid,int CommentId);
+        public Task<bool> IsTheOwner(String userid,int CommentId);
         public Task<Comment> GetCommmnetAsync(int Id);
         public Task<PagedList<SubComment>> GetSubCommentsAsync(int Id,Paging Params);
         public Task<bool> CreateAsync(Comment comment);

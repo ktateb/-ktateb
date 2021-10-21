@@ -91,7 +91,6 @@ namespace API.Controllers
 
             var sectionTecherId = await sectionTecherIdTask;
             var authTecherId = await authTecherIdtask;
-            var courseId = await courseIdTask;
             if (sectionTecherId == default)
             {
                 return NotFound("section Not Found");
