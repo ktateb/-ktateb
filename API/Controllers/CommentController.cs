@@ -37,11 +37,10 @@ namespace API.Controllers
         public async Task<ActionResult<CommentOutput>> Get(int Id)
         {
             var comment = await _iCommentService.GetCommmnetAsync(Id);
-            if (comment is null)
-            {
-                return NotFound();
+            if(comment.Code==Services.Services.ServiceResult<Comment>.ResultCode.NotFound){
+                return NotFound(comment.Messege);
             }
-            return Ok(_mapper.Map<Comment,CommentOutput>(comment));
+            return Ok(_mapper.Map<Comment,CommentOutput>(comment.Result));
         }
         [Authorize]
         [HttpPost("Create")]
