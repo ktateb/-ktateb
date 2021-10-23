@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace Services.Services
 {
-
-    public  class ServiceResult<T>
+    public enum ResultStatusCode
     {
-        public enum ResultCode{
-            Done,NotFound,Unauthorized,BadRequist
-        }
-        public T Result { get  ; set; } 
-        public ResultCode Code { get; set; } 
-        public string Messege { get; set; }
+        Done = 1, NotFound, Unauthorized, BadRequist
+    }
+
+    public class ResultService<T>
+    {
+        public T Result { get; set; }
+        public ResultStatusCode Code { get; set; } = ResultStatusCode.Done;
+        public string Messege { get; set; } = "Done";
     }
 }

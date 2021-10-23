@@ -12,6 +12,7 @@ using Model.SubComment.Outputs;
 using System.Collections.Generic;
 using Model.Helper;
 using API.Helpers;
+using Services.Services;
 
 namespace API.Controllers
 {
@@ -29,7 +30,7 @@ namespace API.Controllers
         [HttpPost("{Id}/SubComments")]
         public async Task<List<SubCommentOutput>> Get(int Id, Paging Params)
         {
-            var subcomments = await _iCommentService.GetSubCommentsAsync(Id, Params); 
+            var subcomments = await _iCommentService.GetSubCommentsAsync(Id, Params);
             Response.AddPagination(subcomments.CurrentPage, subcomments.ItemsPerPage, subcomments.TotalItems, subcomments.TotalPages);
             return _mapper.Map<List<SubComment>, List<SubCommentOutput>>(subcomments);
         }
@@ -37,10 +38,11 @@ namespace API.Controllers
         public async Task<ActionResult<CommentOutput>> Get(int Id)
         {
             var comment = await _iCommentService.GetCommmnetAsync(Id);
-            if(comment.Code==Services.Services.ServiceResult<Comment>.ResultCode.NotFound){
+            if (comment.Code == ResultStatusCode.NotFound)
+            {
                 return NotFound(comment.Messege);
             }
-            return Ok(_mapper.Map<Comment,CommentOutput>(comment.Result));
+            return Ok(comment.Result);
         }
         [Authorize]
         [HttpPost("Create")]
@@ -60,12 +62,12 @@ namespace API.Controllers
         {
             var userTask = _accountService.GetUserByUserClaim(HttpContext.User);
             var commentToCreate = _mapper.Map<CommentUpdateInput, Comment>(comment);
-            var userid=(await userTask).Id;
+            var userid = (await userTask).Id;
             if (!await _iCommentService.IsTheOwner(userid, comment.Id))
             {
                 return Unauthorized();
             }
-            commentToCreate.UserId=(await userTask).Id;
+            commentToCreate.UserId = (await userTask).Id;
             if (await _iCommentService.UpdateAsync(commentToCreate))
                 return Ok("Done");
             return BadRequest();

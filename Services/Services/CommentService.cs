@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using Model.Helper;
 using Services.Services;
+using AutoMapper;
+using Model.Comment.Outputs;
 
 namespace Services
 {
@@ -15,34 +17,31 @@ namespace Services
     {
         private readonly IGenericRepository<Comment> _commentrepository;
         private readonly IGenericRepository<SubComment> _subcommentrepository;
-        public CommentService(IGenericRepository<Comment> commentrepository, IGenericRepository<SubComment> subcommentrepository)
+        private readonly IMapper _mapper;
+        public CommentService(IGenericRepository<Comment> commentrepository, IGenericRepository<SubComment> subcommentrepository, IMapper mapper)
         {
             _commentrepository = commentrepository;
             _subcommentrepository = subcommentrepository;
+            _mapper = mapper;
         }
 
         public async Task<bool> DeleteAsync(int Id) =>
             await _commentrepository.DeleteAsync(Id);
 
-        public async Task<ServiceResult<Comment>> GetCommmnetAsync(int Id)
+        public async Task<ResultService<CommentOutput>> GetCommmnetAsync(int Id)
         {
+            var resultService = new ResultService<CommentOutput>();
+            var comment = _mapper.Map<Comment, CommentOutput>(await _commentrepository.GetQuery().Include(c => c.User).Where(c => c.Id == Id).FirstOrDefaultAsync());
 
-            var Comment = await _commentrepository.GetQuery().Include(c => c.User).Where(c => c.Id == Id).FirstOrDefaultAsync();
-
-            if (Comment is null)
+            if (comment is null)
             {
-                return new ServiceResult<Comment>
-                {
-                    Code = ServiceResult<Comment>.ResultCode.NotFound,
-                    Messege = "Comment Not Found"
-                };
+                resultService.Code = ResultStatusCode.NotFound;
+                resultService.Messege = "Comment is not exist";
+                return resultService;
             }
-            return new ServiceResult<Comment>
-            {
-                Code = ServiceResult<Comment>.ResultCode.Done,
-                Result = Comment
-            };
-
+            resultService.Code = ResultStatusCode.Done;
+            resultService.Result = comment;
+            return resultService;
         }
 
         public async Task<PagedList<SubComment>> GetSubCommentsAsync(int Id, Paging Params)
@@ -78,7 +77,7 @@ namespace Services
     {
         public Task<String> GetUserIdOrDefultAsync(int Id);
         public Task<bool> IsTheOwner(String userid, int CommentId);
-        public Task<ServiceResult<Comment>> GetCommmnetAsync(int Id);
+        public Task<ResultService<CommentOutput>> GetCommmnetAsync(int Id);
         public Task<PagedList<SubComment>> GetSubCommentsAsync(int Id, Paging Params);
         public Task<bool> CreateAsync(Comment comment);
         public Task<bool> UpdateAsync(Comment comment);

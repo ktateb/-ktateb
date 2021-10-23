@@ -16,7 +16,7 @@ namespace Services
         public Task<Rating> GetRatingForCourseAsync()
         {
             throw new System.NotImplementedException();
-        }
+        }   
 
         public async Task<bool> RatingCourseAsync(Rating rating) =>
             await _ratingRepository.CreateAsync(rating);
