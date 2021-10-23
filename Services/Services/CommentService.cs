@@ -10,6 +10,10 @@ using Model.Helper;
 using Services.Services;
 using AutoMapper;
 using Model.Comment.Outputs;
+using DAL.Entities.Identity;
+using Model.SubComment.Outputs;
+using System.ComponentModel;
+using Model.Comment.Inputs;
 
 namespace Services
 {
@@ -24,10 +28,6 @@ namespace Services
             _subcommentrepository = subcommentrepository;
             _mapper = mapper;
         }
-
-        public async Task<bool> DeleteAsync(int Id) =>
-            await _commentrepository.DeleteAsync(Id);
-
         public async Task<ResultService<CommentOutput>> GetCommmnetAsync(int Id)
         {
             var resultService = new ResultService<CommentOutput>();
@@ -39,48 +39,92 @@ namespace Services
                 resultService.Messege = "Comment is not exist";
                 return resultService;
             }
-            resultService.Code = ResultStatusCode.Done;
+            resultService.Code = ResultStatusCode.Ok;
             resultService.Result = comment;
             return resultService;
         }
 
         public async Task<PagedList<SubComment>> GetSubCommentsAsync(int Id, Paging Params)
         {
-            var q = _subcommentrepository.GetQuery().Where(c => c.CommentId == Id).Include(s => s.User).OrderByDescending(c => c.DateComment);
-            return await PagedList<SubComment>.CreatePagingListAsync(q, Params.PageNumber, Params.PageSize);
+            var Query = _subcommentrepository.GetQuery().Where(c => c.CommentId == Id).Include(s => s.User).OrderByDescending(c => c.DateComment); 
+            return await PagedList<SubComment>.CreatePagingListAsync(Query, Params.PageNumber, Params.PageSize); 
         }
-        public async Task<bool> CreateAsync(Comment comment)
+        public async Task<ResultService<string>> CreateAsync(CommentCreateInput comment, User user)
         {
-            comment.IsUpdated = false;
-            comment.DateComment = DateTime.Now;
-            return await _commentrepository.CreateAsync(comment);
+
+            var commentToCreate = _mapper.Map<CommentCreateInput, Comment>(comment);
+            commentToCreate.UserId = user.Id;
+            commentToCreate.IsUpdated = false;
+            commentToCreate.DateComment = DateTime.Now;
+            if (await _commentrepository.CreateAsync(commentToCreate))
+            {
+                return new() { Code = ResultStatusCode.Ok, Result  = "Done",Messege="Done" };
+            }
+            return new() { Code = ResultStatusCode.BadRequist, Messege = "Cannot Comment" };
         }
 
-        public async Task<bool> UpdateAsync(Comment comment)
+        public async Task<ResultService<string>> UpdateAsync(CommentUpdateInput comment, User user)
         {
-            comment.IsUpdated = true;
+            var commentToCreate = _mapper.Map<CommentUpdateInput, Comment>(comment);
+            var Result = await CanEdite(user, comment.Id);
+            if (Result.Code != ResultStatusCode.Ok)
+            {
+                return Result;
+            }
             var com = await _commentrepository.GetQuery().Where(c => c.Id == comment.Id).Select(c => new { c.DateComment, c.CourseId }).FirstOrDefaultAsync();
-            if (com == default) return false;
-            comment.DateComment = com.DateComment;
-            comment.CourseId = com.CourseId;
-            return await _commentrepository.UpdateAsync(comment);
+            commentToCreate.UserId = user.Id;
+            commentToCreate.IsUpdated = true;
+            commentToCreate.DateComment = com.DateComment;
+            commentToCreate.CourseId = com.CourseId;
+            if (await _commentrepository.UpdateAsync(commentToCreate))
+                return Result;
+            Result.Code = ResultStatusCode.BadRequist;
+            Result.Messege = "Cannot update this Comment";
+            return Result;
         }
-        public async Task<String> GetUserIdOrDefultAsync(int Id) =>
-            await _commentrepository.GetQuery().Where(c => c.Id == Id).Select(c => c.UserId).FirstOrDefaultAsync();
-
-        public async Task<bool> IsTheOwner(String userid, int CommentId) =>
-             (await GetUserIdOrDefultAsync(CommentId)).Equals(userid);
+        private async Task<string> GetUserIdOrDefultAsync(int Id) =>
+             await _commentrepository.GetQuery().Where(c => c.Id == Id).Select(c => c.UserId).FirstOrDefaultAsync();
 
 
+        public async Task<ResultService<string>> CanEdite(User user, int CommentId)
+        {
+            var UserId = await GetUserIdOrDefultAsync(CommentId);
+            var Result = new ResultService<string>();
+            if (UserId is null)
+            {
+                Result.Code = ResultStatusCode.NotFound;
+                Result.Messege= Result.Result = "Comment Not Found";
+                 
+            }
+            else if (!UserId.Equals(user.Id))
+            {
+                Result.Code = ResultStatusCode.Unauthorized;
+                Result.Result =Result.Messege = "You are  not the Owner"; 
+            } 
+            return Result;
+        }
+        public async Task<ResultService<string>> DeleteAsync(int Id, User user)
+        {
+            var Result = await CanEdite(user, Id);
+            if (Result.Code != ResultStatusCode.Ok)
+            {
+                return Result;
+            }
+            if (await _commentrepository.DeleteAsync(Id))
+                return Result;
+            Result.Code = ResultStatusCode.BadRequist;
+            Result.Messege = "Cannot Delete this Comment";
+            return Result;
+        }
     }
     public interface ICommentService
     {
-        public Task<String> GetUserIdOrDefultAsync(int Id);
-        public Task<bool> IsTheOwner(String userid, int CommentId);
+
+        public Task<ResultService<string>> CanEdite(User user, int CommentId);
         public Task<ResultService<CommentOutput>> GetCommmnetAsync(int Id);
         public Task<PagedList<SubComment>> GetSubCommentsAsync(int Id, Paging Params);
-        public Task<bool> CreateAsync(Comment comment);
-        public Task<bool> UpdateAsync(Comment comment);
-        public Task<bool> DeleteAsync(int Id);
+        public Task<ResultService<string>> CreateAsync(CommentCreateInput comment, User user);
+        public Task<ResultService<string>> UpdateAsync(CommentUpdateInput comment, User user);
+        public Task<ResultService<string>> DeleteAsync(int Id, User user);
     }
 }

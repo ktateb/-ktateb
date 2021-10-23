@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using Model.Helper;
 using API.Helpers;
 using Services.Services;
+using API.Extensions;
 
 namespace API.Controllers
 {
@@ -38,52 +39,29 @@ namespace API.Controllers
         public async Task<ActionResult<CommentOutput>> Get(int Id)
         {
             var comment = await _iCommentService.GetCommmnetAsync(Id);
-            if (comment.Code == ResultStatusCode.NotFound)
-            {
-                return NotFound(comment.Messege);
-            }
-            return Ok(comment.Result);
+            return this.GetResult<CommentOutput>(comment);
         }
         [Authorize]
         [HttpPost("Create")]
-        public async Task<ActionResult> Create(CommentCreateInput comment)
+        public async Task<ActionResult<string>> Create(CommentCreateInput comment)
         {
             var userTask = _accountService.GetUserByUserClaim(HttpContext.User);
-            var commentToCreate = _mapper.Map<CommentCreateInput, Comment>(comment);
-            commentToCreate.UserId = (await userTask).Id;
-            if (await _iCommentService.CreateAsync(commentToCreate))
-                return Ok("Done");
-            return BadRequest();
+            return GetResult<string>(await _iCommentService.CreateAsync(comment, await userTask));
         }
 
         [Authorize]
         [HttpPost("update")]
-        public async Task<ActionResult> Update(CommentUpdateInput comment)
+        public async Task<ActionResult<String>> Update(CommentUpdateInput comment)
         {
             var userTask = _accountService.GetUserByUserClaim(HttpContext.User);
-            var commentToCreate = _mapper.Map<CommentUpdateInput, Comment>(comment);
-            var userid = (await userTask).Id;
-            if (!await _iCommentService.IsTheOwner(userid, comment.Id))
-            {
-                return Unauthorized();
-            }
-            commentToCreate.UserId = (await userTask).Id;
-            if (await _iCommentService.UpdateAsync(commentToCreate))
-                return Ok("Done");
-            return BadRequest();
+            return GetResult<string>(await _iCommentService.UpdateAsync(comment, await userTask));
         }
         [Authorize]
         [HttpPost("Delete")]
-        public async Task<ActionResult> Delete(int Id)
+        public async Task<ActionResult<string>> Delete(int Id)
         {
-            var userTask = _accountService.GetUserByUserClaim(HttpContext.User);
-            if (!await _iCommentService.IsTheOwner((await userTask).Id, Id))
-            {
-                return Unauthorized();
-            }
-            if (await _iCommentService.DeleteAsync(Id))
-                return Ok("Done");
-            return BadRequest();
+            var userTask = _accountService.GetUserByUserClaim(HttpContext.User); 
+            return GetResult<string>(await _iCommentService.DeleteAsync(Id, await userTask)); 
         }
     }
 }
