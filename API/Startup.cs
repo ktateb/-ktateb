@@ -52,10 +52,10 @@ namespace API
             services.AddAutoMapper(typeof(RatingProfile));
             // sarya 
             services.AddAutoMapper(typeof(CategoryProfile));
-            services.AddAutoMapper(typeof(CourseProfile)); 
-            services.AddAutoMapper(typeof(CourseSectionProfile)); 
-            services.AddAutoMapper(typeof(TeacherProfile)); 
-            services.AddAutoMapper(typeof(CommentProfile)); 
+            services.AddAutoMapper(typeof(CourseProfile));
+            services.AddAutoMapper(typeof(CourseSectionProfile));
+            services.AddAutoMapper(typeof(TeacherProfile));
+            services.AddAutoMapper(typeof(CommentProfile));
             services.AddAutoMapper(typeof(SubCommentProfile));
             #endregion
 
@@ -91,10 +91,10 @@ namespace API
             #region Dependency Injection
 
             //// ahmad Services
-            services.AddScoped(typeof(IGenericRepository<Message>), typeof(GenericRepository<Message>)); 
+            services.AddScoped(typeof(IGenericRepository<Message>), typeof(GenericRepository<Message>));
             services.AddScoped(typeof(IGenericRepository<ReportCourse>), typeof(GenericRepository<ReportCourse>));
             services.AddScoped(typeof(IGenericRepository<ReportComment>), typeof(GenericRepository<ReportComment>));
-            services.AddScoped(typeof(IGenericRepository<ReportSubComment>), typeof(GenericRepository<ReportSubComment>)); 
+            services.AddScoped(typeof(IGenericRepository<ReportSubComment>), typeof(GenericRepository<ReportSubComment>));
             services.AddScoped(typeof(IGenericRepository<ReportUser>), typeof(GenericRepository<ReportUser>));
             services.AddScoped(typeof(IGenericRepository<ReportMessage>), typeof(GenericRepository<ReportMessage>));
             services.AddScoped(typeof(IGenericRepository<Country>), typeof(GenericRepository<Country>));
@@ -112,15 +112,15 @@ namespace API
             services.AddScoped(typeof(IGenericRepository<Category>), typeof(GenericRepository<Category>));
             services.AddScoped(typeof(IGenericRepository<Course>), typeof(GenericRepository<Course>));
             services.AddScoped(typeof(IGenericRepository<CourseSection>), typeof(GenericRepository<CourseSection>));
-            services.AddScoped(typeof(IGenericRepository<CourseVedio>), typeof(GenericRepository<CourseVedio>)); 
-            services.AddScoped(typeof(IGenericRepository<StudentCourse>), typeof(GenericRepository<StudentCourse>));  
-            services.AddScoped(typeof(IGenericRepository<Comment>), typeof(GenericRepository<Comment>)); 
+            services.AddScoped(typeof(IGenericRepository<CourseVedio>), typeof(GenericRepository<CourseVedio>));
+            services.AddScoped(typeof(IGenericRepository<StudentCourse>), typeof(GenericRepository<StudentCourse>));
+            services.AddScoped(typeof(IGenericRepository<Comment>), typeof(GenericRepository<Comment>));
             services.AddScoped(typeof(IGenericRepository<SubComment>), typeof(GenericRepository<SubComment>));
             services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<ICourseService, CourseService>();
-            services.AddScoped<ICourseSectionService, CourseSectionService>(); 
-            services.AddScoped<ITeacherService, TeacherService>(); 
-            services.AddScoped<ICommentService, CommentService>();  
+            services.AddScoped<ICourseSectionService, CourseSectionService>();
+            services.AddScoped<ITeacherService, TeacherService>();
+            services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<ISubCommentService, SubCommentService>();
             /////
             services.AddIdentityServices(_configuration);
@@ -134,7 +134,7 @@ namespace API
                 var securitySchema = new OpenApiSecurityScheme
                 {
                     Description = "JWT Auth Bearer Scheme",
-                    Name = "Authorization",
+                    Name = "Authorization", 
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
                     Scheme = "bearer",
@@ -145,12 +145,13 @@ namespace API
                     }
                 };
 
-                opt.AddSecurityDefinition("Bearer", securitySchema);
+                opt.AddSecurityDefinition(securitySchema.Reference.Id, securitySchema);
                 var securityRequirement = new OpenApiSecurityRequirement
                 {
-                        {securitySchema , new [] {"Bearer"}}
+                    {securitySchema , new string[]{}}
                 };
                 opt.AddSecurityRequirement(securityRequirement);
+                // opt.OperationFilter<AppendAuthoriziton>();
             });
             #endregion
 

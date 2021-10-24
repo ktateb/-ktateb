@@ -7,13 +7,13 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
 using Model.Helper;
-using Services.Services;
 using AutoMapper;
 using Model.Comment.Outputs;
 using DAL.Entities.Identity;
 using Model.SubComment.Outputs;
 using System.ComponentModel;
 using Model.Comment.Inputs;
+using Common.Services;
 
 namespace Services
 {
@@ -28,6 +28,12 @@ namespace Services
             _subcommentrepository = subcommentrepository;
             _mapper = mapper;
         }
+
+
+
+        /*
+            Check ReportService to see what i did
+        */
         public async Task<ResultService<CommentOutput>> GetCommmnetAsync(int Id)
         {
             var resultService = new ResultService<CommentOutput>();
@@ -46,21 +52,27 @@ namespace Services
 
         public async Task<PagedList<SubComment>> GetSubCommentsAsync(int Id, Paging Params)
         {
-            var Query = _subcommentrepository.GetQuery().Where(c => c.CommentId == Id).Include(s => s.User).OrderByDescending(c => c.DateComment); 
-            return await PagedList<SubComment>.CreatePagingListAsync(Query, Params.PageNumber, Params.PageSize); 
+            var Query = _subcommentrepository.GetQuery().Where(c => c.CommentId == Id).Include(s => s.User).OrderByDescending(c => c.DateComment);
+            return await PagedList<SubComment>.CreatePagingListAsync(Query, Params.PageNumber, Params.PageSize);
         }
         public async Task<ResultService<string>> CreateAsync(CommentCreateInput comment, User user)
         {
-
+            var result = new ResultService<string>();
             var commentToCreate = _mapper.Map<CommentCreateInput, Comment>(comment);
             commentToCreate.UserId = user.Id;
             commentToCreate.IsUpdated = false;
             commentToCreate.DateComment = DateTime.Now;
             if (await _commentrepository.CreateAsync(commentToCreate))
             {
-                return new() { Code = ResultStatusCode.Ok, Result  = "Done",Messege="Done" };
+                result.Code = ResultStatusCode.Ok;
+                result.Messege = "Done";
+                result.Result = "Done";
+                return result;
             }
-            return new() { Code = ResultStatusCode.BadRequist, Messege = "Cannot Comment" };
+            result.Code = ResultStatusCode.InternalServerError;
+            result.Messege = "Ex";
+            result.Result = "ex";
+            return result;
         }
 
         public async Task<ResultService<string>> UpdateAsync(CommentUpdateInput comment, User user)
@@ -93,14 +105,14 @@ namespace Services
             if (UserId is null)
             {
                 Result.Code = ResultStatusCode.NotFound;
-                Result.Messege= Result.Result = "Comment Not Found";
-                 
+                Result.Messege = Result.Result = "Comment Not Found";
+
             }
             else if (!UserId.Equals(user.Id))
             {
-                Result.Code = ResultStatusCode.Unauthorized;
-                Result.Result =Result.Messege = "You are  not the Owner"; 
-            } 
+                Result.Code = ResultStatusCode.BadRequist;
+                Result.Result = Result.Messege = "You are  not the Owner";
+            }
             return Result;
         }
         public async Task<ResultService<string>> DeleteAsync(int Id, User user)
