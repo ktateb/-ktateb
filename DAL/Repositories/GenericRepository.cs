@@ -84,6 +84,9 @@ namespace DAL.Repositories
             _dbContext.Remove(dbRecord);
             return await _dbContext.SaveChangesAsync() > 0;
         }
+        public async Task<bool> IsExist(int id){
+            return await  _dbContext.Set<T>().Where(i=>i.Id==id).AnyAsync();
+        }
     }
     public interface IGenericRepository<T> where T : BaseEntity
     {
@@ -91,6 +94,7 @@ namespace DAL.Repositories
         public Task<bool> CreateAsync(T input);
         public Task<bool> UpdateAsync(T input);
         public Task<bool> DeleteAsync(int id);
+        public Task<bool> IsExist(int id);
         public Task<List<T>> GetListAsync();
         public IQueryable<T> GetQuery();
     }
