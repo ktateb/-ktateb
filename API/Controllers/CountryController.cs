@@ -31,6 +31,5 @@ namespace API.Controllers
                 return NotFound("This countriy is not exsit");
             return Ok(_mapper.Map<Country, CountryOutput>(dbRecord));
         }
-
     }
 }

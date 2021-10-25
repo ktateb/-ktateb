@@ -148,7 +148,7 @@ namespace API
                 opt.AddSecurityDefinition(securitySchema.Reference.Id, securitySchema);
                 var securityRequirement = new OpenApiSecurityRequirement
                 {
-                    {securitySchema , new string[]{}}
+                    {securitySchema , System.Array.Empty<string>()}
                 };
                 opt.AddSecurityRequirement(securityRequirement);
                 // opt.OperationFilter<AppendAuthoriziton>();

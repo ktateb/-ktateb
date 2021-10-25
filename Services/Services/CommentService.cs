@@ -90,7 +90,7 @@ namespace Services
             commentToCreate.CourseId = com.CourseId;
             if (await _commentrepository.UpdateAsync(commentToCreate))
                 return Result;
-            Result.Code = ResultStatusCode.BadRequist;
+            Result.Code = ResultStatusCode.BadRequest;
             Result.Messege = "Cannot update this Comment";
             return Result;
         }
@@ -110,7 +110,7 @@ namespace Services
             }
             else if (!UserId.Equals(user.Id))
             {
-                Result.Code = ResultStatusCode.BadRequist;
+                Result.Code = ResultStatusCode.BadRequest;
                 Result.Result = Result.Messege = "You are  not the Owner";
             }
             return Result;
@@ -124,7 +124,7 @@ namespace Services
             }
             if (await _commentrepository.DeleteAsync(Id))
                 return Result;
-            Result.Code = ResultStatusCode.BadRequist;
+            Result.Code = ResultStatusCode.BadRequest;
             Result.Messege = "Cannot Delete this Comment";
             return Result;
         }

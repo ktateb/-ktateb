@@ -856,7 +856,7 @@ namespace DAL.Migrations
             modelBuilder.Entity("DAL.Entities.Comments.SubComment", b =>
                 {
                     b.HasOne("DAL.Entities.Comments.Comment", "Comment")
-                        .WithMany()
+                        .WithMany("SubComments")
                         .HasForeignKey("CommentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1201,6 +1201,8 @@ namespace DAL.Migrations
             modelBuilder.Entity("DAL.Entities.Comments.Comment", b =>
                 {
                     b.Navigation("ReportsComment");
+
+                    b.Navigation("SubComments");
                 });
 
             modelBuilder.Entity("DAL.Entities.Comments.SubComment", b =>

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20211018085622_InitialCreate")]
+    [Migration("20211025030032_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -858,7 +858,7 @@ namespace DAL.Migrations
             modelBuilder.Entity("DAL.Entities.Comments.SubComment", b =>
                 {
                     b.HasOne("DAL.Entities.Comments.Comment", "Comment")
-                        .WithMany()
+                        .WithMany("SubComments")
                         .HasForeignKey("CommentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1203,6 +1203,8 @@ namespace DAL.Migrations
             modelBuilder.Entity("DAL.Entities.Comments.Comment", b =>
                 {
                     b.Navigation("ReportsComment");
+
+                    b.Navigation("SubComments");
                 });
 
             modelBuilder.Entity("DAL.Entities.Comments.SubComment", b =>

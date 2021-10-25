@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Controllers.Common;
 using AutoMapper;
+using Common.Services;
 using DAL.Entities.Ratings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,33 +16,28 @@ namespace API.Controllers
     {
         private readonly IRatingService _ratingService;
         private readonly IAccountService _accountService;
-        private readonly IMapper _mapper;
 
-        public RatingController(IRatingService ratingService, IAccountService accountService, IMapper mapper)
+        public RatingController(IRatingService ratingService, IAccountService accountService)
         {
             _ratingService = ratingService;
             _accountService = accountService;
-            _mapper = mapper;
         }
 
-        [Authorize(Roles = "Student")]
+        // [Authorize(Roles = "Student")]
         [HttpPost("RatingCourse")]
-        public async Task<ActionResult> RatingCourse(RatingInput input)
-        {
-            var user = await _accountService.GetUserByUserClaim(HttpContext.User);
-            if (user == null)
-                return Unauthorized("User is Unauthorized, just students can rating course");
-            var rating = _mapper.Map<RatingInput, Rating>(input);
-            rating.UserId = user.Id;
-            await _ratingService.RatingCourseAsync(rating);
-            return Ok("Done");
-        }
+        public async Task<ActionResult<ResultService<bool>>> RatingCourse(RatingInput input) =>
+            GetResult(await _ratingService.RatingCourseAsync(input, await _accountService.GetUserByUserClaim(HttpContext.User)));
 
-        // [HttpGet("RatingCourse/{id}")]
-        // public async Task<RatingOutput> GetRatingCourse(int id)
-        // {
-        //     // await _accountService.            
-        // }
+        [HttpDelete("DeleteRating/{id}")]
+        public async Task<ActionResult<ResultService<bool>>> DeleteRating(int id) =>
+            GetResult(await _ratingService.DeleteRating(id, await _accountService.GetUserByUserClaim(HttpContext.User)));
 
+        [HttpGet("ratings")]
+        public ActionResult<ResultService<Dictionary<string, int>>> GetRatingsData() =>
+            GetResult(_ratingService.GetRatingsData());
+
+        [HttpGet("RatingCourse/{id}")]
+        public async Task<ActionResult<ResultService<RatingOutput>>> GetRatingCourse(int id) =>
+            GetResult(await _ratingService.GetRatingForCourseAsync(id));
     }
 }

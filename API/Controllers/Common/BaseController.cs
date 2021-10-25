@@ -15,7 +15,7 @@ namespace API.Controllers.Common
             return result.Code switch
             {
                 ResultStatusCode.Ok => Ok(result),
-                ResultStatusCode.BadRequist => BadRequest(result),
+                ResultStatusCode.BadRequest => BadRequest(result),
                 ResultStatusCode.NotFound => NotFound(result),
                 ResultStatusCode.Unauthorized => Unauthorized(result),
                 _ => StatusCode(500, result),
