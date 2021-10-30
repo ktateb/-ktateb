@@ -604,17 +604,14 @@ namespace DAL.Migrations
                     b.Property<int>("CourseId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("StudentFavoriteCourses");
                 });
@@ -628,8 +625,8 @@ namespace DAL.Migrations
                     b.Property<string>("UserId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("UsertId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("UsertId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("VedioId")
                         .HasColumnType("INTEGER");
@@ -1100,7 +1097,7 @@ namespace DAL.Migrations
 
                     b.HasOne("DAL.Entities.Identity.User", "User")
                         .WithMany("FavorateCourses")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Course");
 

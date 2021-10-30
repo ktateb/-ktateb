@@ -9,7 +9,7 @@ namespace DAL.Entities.StudentWatches
     {
         public DateTime WatchedDate { get; set; }
         public virtual User User { get; set; }
-        public int UsertId { get; set; }
+        public string UsertId { get; set; }
         public virtual CourseVedio Vedio { get; set; }
         public int VedioId { get; set; }
     }

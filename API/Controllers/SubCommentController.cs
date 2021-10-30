@@ -15,7 +15,7 @@ namespace API.Controllers
     { 
         private readonly ISubCommentService _isubCommentService;
         private readonly IAccountService _accountService;
-        public SubCommentController(IMapper mapper, ISubCommentService isubCommentService, IAccountService accountService)
+        public SubCommentController(ISubCommentService isubCommentService, IAccountService accountService)
         {
             _accountService = accountService; 
             _isubCommentService = isubCommentService;
