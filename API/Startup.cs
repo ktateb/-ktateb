@@ -28,6 +28,9 @@ using Model.Rating.Inputs;
 using DAL.Entities.Comments;
 using DAL.Entities.StudentCourses;
 using DAL.Entities.Teachers;
+using DAL.Entities.StudentWatches;
+using DAL.Entities.StudentFavoriteCourses;
+using Services.Services;
 
 namespace API
 {
@@ -57,6 +60,8 @@ namespace API
             services.AddAutoMapper(typeof(TeacherProfile));
             services.AddAutoMapper(typeof(CommentProfile));
             services.AddAutoMapper(typeof(SubCommentProfile));
+            services.AddAutoMapper(typeof(StudentFavoriteCourseProfile)); 
+            services.AddAutoMapper(typeof(WatchedVedioProfile));
             #endregion
 
             services.AddControllers();
@@ -115,14 +120,18 @@ namespace API
             services.AddScoped(typeof(IGenericRepository<CourseVedio>), typeof(GenericRepository<CourseVedio>));
             services.AddScoped(typeof(IGenericRepository<StudentCourse>), typeof(GenericRepository<StudentCourse>));
             services.AddScoped(typeof(IGenericRepository<Comment>), typeof(GenericRepository<Comment>));
-            services.AddScoped(typeof(IGenericRepository<SubComment>), typeof(GenericRepository<SubComment>));
+            services.AddScoped(typeof(IGenericRepository<SubComment>), typeof(GenericRepository<SubComment>)); 
+            services.AddScoped(typeof(IGenericRepository<StudentWatchedVedio>), typeof(GenericRepository<StudentWatchedVedio>));
+            services.AddScoped(typeof(IGenericRepository<StudentFavoriteCourse>), typeof(GenericRepository<StudentFavoriteCourse>));
             services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ICourseSectionService, CourseSectionService>();
             services.AddScoped<ITeacherService, TeacherService>();
             services.AddScoped<ICommentService, CommentService>();
-            services.AddScoped<ISubCommentService, SubCommentService>();
-            /////
+            services.AddScoped<ISubCommentService, SubCommentService>(); 
+            services.AddScoped<IStudentWatchesService, StudentWatchesService>();
+            services.AddScoped<IFavoriteCoursesService, FavoriteCoursesService>();
+    
             services.AddIdentityServices(_configuration);
             #endregion
 

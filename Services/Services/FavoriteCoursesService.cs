@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Services.Services
 {
-    public class FavoriteCoursesService
+    public class FavoriteCoursesService:IFavoriteCoursesService
     {
         private readonly IGenericRepository<Course> _iCourseRepository;
         private readonly IGenericRepository<StudentFavoriteCourse> _iFavoriteRepository;

@@ -13,7 +13,7 @@ using Model.Helper;
 
 namespace Services.Services
 {
-    public class StudentWatchesService
+    public class StudentWatchesService:IStudentWatchesService
     {
         private readonly IGenericRepository<CourseVedio> _iCourseVedioRepository;
         private readonly IGenericRepository<StudentWatchedVedio> _iWatchesRepository;
