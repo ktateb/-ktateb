@@ -4,9 +4,11 @@ using System.Threading.Tasks;
 using API.Controllers.Common;
 using API.Helpers;
 using AutoMapper;
+using Common.Services;
 using DAL.Entities.Messages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Model.Helper;
 using Model.Message.Inputs;
 using Model.Message.Outputs;
 using Services;
@@ -20,7 +22,7 @@ namespace API.Controllers
         private readonly IAccountService _accountService;
         private readonly IMapper _mapper;
 
-        public MessageController(IMessageService messageRepository, IAccountService accountService, IMapper mapper)
+        public MessageController(IMapper mapper, IMessageService messageRepository, IAccountService accountService)
         {
             _messageRepository = messageRepository;
             _accountService = accountService;
@@ -32,78 +34,48 @@ namespace API.Controllers
         {
             var user = await _accountService.GetUserByUserClaim(HttpContext.User);
             if (user == null)
-                return Unauthorized("User is Unauthorized");
+            {
+                return Unauthorized("You are Unauthorized");
+            }
             if (user.Id == messageParams.UserReciverId)
-                return BadRequest(@"You can't get your messages with yourself");
-            var messages = await _messageRepository.GetMessages(user.Id, messageParams);
+            {
+                return BadRequest(@"can't get your messages with yourself");
+            }
+            var messages = await _messageRepository.GetMessages(messageParams, user);
             Response.AddPagination(messages.CurrentPage, messages.ItemsPerPage, messages.TotalItems, messages.TotalPages);
-            return Ok(_mapper.Map<List<Message>, List<MessageOutput>>(messages));
+            return _mapper.Map<List<Message>, List<MessageOutput>>(messages);
         }
 
         [HttpDelete("DeleteMessageForAll/{id}")]
-        public async Task<ActionResult> DeleteMessageForAll(int id)
-        {
-            var user = await _accountService.GetUserByUserClaim(HttpContext.User);
-            if (user == null)
-                return Unauthorized("User is Unauthorized");
-            var dbRecord = await _messageRepository.GetMessage(id);
-            if (dbRecord == null)
-                return NotFound("Message is not exist");
-            if (dbRecord.SenderId != user.Id)
-                return Unauthorized("User is Unauthorized");
-            await _messageRepository.DeleteMessageForAll(id);
-            return Ok("Done");
-        }
+        public async Task<ActionResult<ResultService<bool>>> DeleteMessageForAll(int id) =>
+            GetResult(await _messageRepository.DeleteMessageForAll(id, await _accountService.GetUserByUserClaim(HttpContext.User)));
 
         [HttpDelete("DeleteMessageForMe/{id}")]
-        public async Task<ActionResult> DeleteMessageForMe(int id)
-        {
-            var user = await _accountService.GetUserByUserClaim(HttpContext.User);
-            if (user == null)
-                return Unauthorized("User is Unauthorized");
+        public async Task<ActionResult<ResultService<bool>>> DeleteMessageForMe(int id) =>
+            GetResult(await _messageRepository.DeleteMessageForMe(id, await _accountService.GetUserByUserClaim(HttpContext.User)));
 
-            var dbRecord = await _messageRepository.GetMessage(id);
-            if (dbRecord == null)
-                return NotFound("Message is not exist");
-
-            await _messageRepository.DeleteMessageForMe(id);
-            return Ok("Done");
-        }
 
         [HttpPost("Update")]
-        public async Task<ActionResult<MessageOutput>> UpdateMessage(UpdateMessageInput input)
-        {
-            var user = await _accountService.GetUserByUserClaim(HttpContext.User);
-            if (user == null) return Unauthorized("User is Unauthorized");
-
-            var dbRecordUser = await _accountService.GetUserByIdAsync(input.ReciverId);
-            if (dbRecordUser == null)
-                return BadRequest("User you need to update message with him is not exist");
-
-            var dbRecordMessage = await _messageRepository.GetMessage(input.Id);
-            var message = _mapper.Map<UpdateMessageInput, Message>(input, dbRecordMessage);
-            message.SenderId = user.Id;
-            message.IsUpdated = true;
-            await _messageRepository.UpdateMessage(message);
-            return Ok(_mapper.Map<Message, MessageOutput>(message));
-        }
+        public async Task<ActionResult<ResultService<bool>>> UpdateMessage(UpdateMessageInput input) =>
+            GetResult(await _messageRepository.UpdateMessage(input, await _accountService.GetUserByUserClaim(HttpContext.User)));
 
         [HttpPost("SendMessage")]
-        public async Task<ActionResult<MessageOutput>> SendMessage(MessageInput input)
-        {
-            var user = await _accountService.GetUserByUserClaim(HttpContext.User);
-            if (user == null) return Unauthorized("User is Unauthorized");
-            var dbRecordUser = await _accountService.GetUserByIdAsync(input.ReciverId);
-            if (dbRecordUser == null)
-                return BadRequest("You send message to user not exist");
-            if (user.Id == input.ReciverId)
-                return BadRequest(@"You can't talking to yourself");
-
-            var message = _mapper.Map<MessageInput, Message>(input);
-            message.SenderId = user.Id;
-            message.DateSent = DateTime.UtcNow;
-            await _messageRepository.SendMessage(message);
-            return Ok(_mapper.Map<Message, MessageOutput>(message));
-        }
+        public async Task<ActionResult<ResultService<bool>>> SendMessage(MessageInput input) =>
+            GetResult(await _messageRepository.SendMessage(input, await _accountService.GetUserByUserClaim(HttpContext.User)));
     }
 }
+
+
+// var user = await _accountService.GetUserByUserClaim(HttpContext.User);
+//             if (user == null) return Unauthorized("User is Unauthorized");
+
+//             var dbRecordUser = await _accountService.GetUserByIdAsync(input.ReciverId);
+//             if (dbRecordUser == null)
+//                 return BadRequest("User you need to update message with him is not exist");
+
+//             var dbRecordMessage = await _messageRepository.GetMessage(input.Id);
+//             var message = _mapper.Map<UpdateMessageInput, Message>(input, dbRecordMessage);
+//             message.SenderId = user.Id;
+//             message.IsUpdated = true;
+//             await _messageRepository.UpdateMessage(message);
+//             return Ok(_mapper.Map<Message, MessageOutput>(message));

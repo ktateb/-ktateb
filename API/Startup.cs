@@ -60,7 +60,7 @@ namespace API
             services.AddAutoMapper(typeof(TeacherProfile));
             services.AddAutoMapper(typeof(CommentProfile));
             services.AddAutoMapper(typeof(SubCommentProfile));
-            services.AddAutoMapper(typeof(StudentFavoriteCourseProfile)); 
+            services.AddAutoMapper(typeof(StudentFavoriteCourseProfile));
             services.AddAutoMapper(typeof(WatchedVedioProfile));
             #endregion
 
@@ -104,13 +104,13 @@ namespace API
             services.AddScoped(typeof(IGenericRepository<ReportMessage>), typeof(GenericRepository<ReportMessage>));
             services.AddScoped(typeof(IGenericRepository<Country>), typeof(GenericRepository<Country>));
             services.AddScoped(typeof(IGenericRepository<Rating>), typeof(GenericRepository<Rating>));
+            services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IIdentityRepository, IdentityRepository>();
             services.AddScoped<IDashboardService, DashboardService>();
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ICountryService, CountryService>();
-            services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<ITokenService, TokenService>();
             ///// sarya Services
             services.AddScoped(typeof(IGenericRepository<Teacher>), typeof(GenericRepository<Teacher>));
@@ -120,7 +120,7 @@ namespace API
             services.AddScoped(typeof(IGenericRepository<CourseVedio>), typeof(GenericRepository<CourseVedio>));
             services.AddScoped(typeof(IGenericRepository<StudentCourse>), typeof(GenericRepository<StudentCourse>));
             services.AddScoped(typeof(IGenericRepository<Comment>), typeof(GenericRepository<Comment>));
-            services.AddScoped(typeof(IGenericRepository<SubComment>), typeof(GenericRepository<SubComment>)); 
+            services.AddScoped(typeof(IGenericRepository<SubComment>), typeof(GenericRepository<SubComment>));
             services.AddScoped(typeof(IGenericRepository<StudentWatchedVedio>), typeof(GenericRepository<StudentWatchedVedio>));
             services.AddScoped(typeof(IGenericRepository<StudentFavoriteCourse>), typeof(GenericRepository<StudentFavoriteCourse>));
             services.AddScoped<ICategoryServices, CategoryServices>();
@@ -128,10 +128,10 @@ namespace API
             services.AddScoped<ICourseSectionService, CourseSectionService>();
             services.AddScoped<ITeacherService, TeacherService>();
             services.AddScoped<ICommentService, CommentService>();
-            services.AddScoped<ISubCommentService, SubCommentService>(); 
+            services.AddScoped<ISubCommentService, SubCommentService>();
             services.AddScoped<IStudentWatchesService, StudentWatchesService>();
             services.AddScoped<IFavoriteCoursesService, FavoriteCoursesService>();
-    
+
             services.AddIdentityServices(_configuration);
             #endregion
 
@@ -143,7 +143,7 @@ namespace API
                 var securitySchema = new OpenApiSecurityScheme
                 {
                     Description = "JWT Auth Bearer Scheme",
-                    Name = "Authorization", 
+                    Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.Http,
                     Scheme = "bearer",
@@ -163,7 +163,7 @@ namespace API
                 // opt.OperationFilter<AppendAuthoriziton>();
             });
             #endregion
-
+            services.AddCors();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -176,6 +176,11 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(x => x.WithOrigins("https://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials());
 
             app.UseStaticFiles();
 
