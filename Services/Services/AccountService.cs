@@ -9,6 +9,7 @@ using DAL.Entities.Identity.enums;
 using DAL.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Model.Option;
 using Model.User.Inputs;
 
 namespace Services
@@ -91,6 +92,7 @@ namespace Services
                 Email = input.Email,
                 PhoneNumber = input.PhoneNumber,
                 Country = input.Country,
+                Gender = (Gender)input.Gender
             };
 
             var result = await _identityRepository.CreateUserAsync(user, input.Password);
@@ -148,8 +150,8 @@ namespace Services
             await _identityRepository.ChangePasssword(user, currentPassword, newPassword);
         public async Task<bool> CheckPassword(User user, string Password) =>
             await _identityRepository.CheckPassword(user, Password);
-
-
+        public List<OptionOutput> GetGenders() =>
+            Enum.GetValues<Gender>().Cast<Gender>().Select(e => new OptionOutput { Id = (int)e, Name = e.ToString() }).ToList();
     }
     public interface IAccountService
     {
@@ -165,6 +167,6 @@ namespace Services
         public Task<User> GetUserByUserClaim(ClaimsPrincipal userClaim);
         public Task<bool> ChangePassword(User user, string currentPassword, string newPassword);
         public Task<bool> CheckPassword(User user, string Password);
-
+        public List<OptionOutput> GetGenders();
     }
 }

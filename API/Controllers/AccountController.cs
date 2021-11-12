@@ -8,6 +8,7 @@ using DAL.Entities.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Model.Option;
 using Model.User.Inputs;
 using Model.User.Outputs;
 using Services;
@@ -127,5 +128,11 @@ namespace API.Controllers
             await _accountService.ChangePassword(user, input.CurrentPassword, input.Password);
             return Ok("Done");
         }
+
+        [AllowAnonymous]
+        [HttpGet("GetGenders")]
+        public List<OptionOutput> GetGenders() =>
+            _accountService.GetGenders();
+
     }
 }

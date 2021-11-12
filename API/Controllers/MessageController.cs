@@ -64,18 +64,3 @@ namespace API.Controllers
             GetResult(await _messageRepository.SendMessage(input, await _accountService.GetUserByUserClaim(HttpContext.User)));
     }
 }
-
-
-// var user = await _accountService.GetUserByUserClaim(HttpContext.User);
-//             if (user == null) return Unauthorized("User is Unauthorized");
-
-//             var dbRecordUser = await _accountService.GetUserByIdAsync(input.ReciverId);
-//             if (dbRecordUser == null)
-//                 return BadRequest("User you need to update message with him is not exist");
-
-//             var dbRecordMessage = await _messageRepository.GetMessage(input.Id);
-//             var message = _mapper.Map<UpdateMessageInput, Message>(input, dbRecordMessage);
-//             message.SenderId = user.Id;
-//             message.IsUpdated = true;
-//             await _messageRepository.UpdateMessage(message);
-//             return Ok(_mapper.Map<Message, MessageOutput>(message));

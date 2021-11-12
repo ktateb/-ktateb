@@ -7,7 +7,7 @@
     "PhoneNumber": "0949151627",
     "FirstName": "Ahmad Nour",
     "LastName": "Al-Sabaggh",
-    "Gender": "Male",
+    "Gender": 1,
     "Country": "Syria"
   },
   {
@@ -18,7 +18,7 @@
     "PhoneNumber": "0952713953",
     "FirstName": "Mohammad Sarya",
     "LastName": "Tulaimat",
-    "Gender": "Male",
+    "Gender": 1,
     "Country": "Syria"
   },
   {
@@ -29,7 +29,7 @@
     "PhoneNumber": "0990416940",
     "FirstName": "Hussam",
     "LastName": "Bashat",
-    "Gender": "Male",
+    "Gender": 1,
     "Country": "Syria"
   }
 ]

@@ -12,7 +12,7 @@ namespace Model.User.Inputs
         public string LastName { get; set; }
         public string PhoneNumber { get; set; }
         public DateTime Birthday { get; set; }
-        public string Gender { get; set; }
+        public int Gender { get; set; }
         public string Country { get; set; }
     }
     public class UserRegisterValidator : AbstractValidator<UserRegister>
@@ -38,7 +38,9 @@ namespace Model.User.Inputs
 
             RuleFor(x => x.PhoneNumber)
                 .Must(x => long.TryParse(x, out var val) && val > 0).WithMessage("Invalid Number.");
-
+            RuleFor(x => x.Gender)
+                .InclusiveBetween(1,2).WithMessage("gender must be 1 or 2, details (id =1 , name =male) or (id =2 , name =female)");
+        
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("Please enter your password")
                 .Length(8, 20).WithMessage("Paswword must have minimum length 8 and maximum length 20")

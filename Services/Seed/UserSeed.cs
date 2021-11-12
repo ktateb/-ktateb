@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using DAL.DataContext;
 using DAL.Entities.Identity;
+using DAL.Entities.Identity.enums;
 using Microsoft.AspNetCore.Identity;
 using Model.User.Outputs;
 
@@ -24,7 +25,7 @@ namespace Services.Seed
                     var userForAdd = new User
                     {
                         Birthday = DateTime.UtcNow,
-                        Gender = user.Gender,
+                        Gender = Gender.Male    ,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Country = user.Country,

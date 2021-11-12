@@ -1,6 +1,7 @@
 using DAL.Entities.Comments;
 using DAL.Entities.Countries;
 using DAL.Entities.CourseQuizes;
+using DAL.Entities.Identity.enums;
 using DAL.Entities.Messages;
 using DAL.Entities.Ratings;
 using DAL.Entities.Reports;
@@ -21,7 +22,7 @@ namespace DAL.Entities.Identity
         public DateTime Birthday { get; set; }
         public string Country { get; set; }
         public string PictureUrl { get; set; }
-        public string Gender { get; set; }
+        public Gender Gender { get; set; }
         public DateTime StartRegisterDate { get; set; }
         public virtual ICollection<Message> UserSenders { get; set; }
         public virtual ICollection<Message> UserRecivers { get; set; }
