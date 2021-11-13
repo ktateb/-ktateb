@@ -134,5 +134,9 @@ namespace API.Controllers
         public List<OptionOutput> GetGenders() =>
             _accountService.GetGenders();
 
+        [Authorize]
+        [HttpGet("Me")]
+        public async Task<UsernameAndRolesOnly> GetMe() =>
+            await _accountService.GetMe(await _accountService.GetUserByUserClaim(HttpContext.User));
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
 using DAL.Entities.Countries;
 using DAL.Entities.Identity;
 using DAL.Entities.Identity.enums;
@@ -11,16 +12,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Model.Option;
 using Model.User.Inputs;
+using Model.User.Outputs;
 
 namespace Services
 {
     public class AccountService : IAccountService
     {
         private readonly IIdentityRepository _identityRepository;
+        private readonly IMapper _mapper;
 
-        public AccountService(IIdentityRepository identityRepository)
+        public AccountService(IIdentityRepository identityRepository, IMapper mapper)
         {
             _identityRepository = identityRepository;
+            _mapper = mapper;
         }
 
         public async Task<User> GetUserByEmailAsync(string email)
@@ -152,6 +156,13 @@ namespace Services
             await _identityRepository.CheckPassword(user, Password);
         public List<OptionOutput> GetGenders() =>
             Enum.GetValues<Gender>().Cast<Gender>().Select(e => new OptionOutput { Id = (int)e, Name = e.ToString() }).ToList();
+        public async Task<UsernameAndRolesOnly> GetMe(User user)
+        {
+            var dbRecordUser = await _identityRepository.GetUserByIdAsync(user.Id);
+            var model = _mapper.Map<User, UsernameAndRolesOnly>(dbRecordUser);
+            model.Roles = await _identityRepository.GetRolesByUserIdAsync(dbRecordUser.Id);
+            return model;
+        }
     }
     public interface IAccountService
     {
@@ -168,5 +179,6 @@ namespace Services
         public Task<bool> ChangePassword(User user, string currentPassword, string newPassword);
         public Task<bool> CheckPassword(User user, string Password);
         public List<OptionOutput> GetGenders();
+        public Task<UsernameAndRolesOnly> GetMe(User user);
     }
 }
