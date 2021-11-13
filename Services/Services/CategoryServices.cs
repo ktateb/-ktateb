@@ -10,6 +10,7 @@ using Common.Services;
 using Model.Category.Output;
 using AutoMapper;
 using Model.Category.Input;
+using Model.Helper;
 
 namespace Services
 {
@@ -24,7 +25,6 @@ namespace Services
             _coursesrepository = coursesrepository;
             _mapper = mapper;
         }
-
         public async Task<ResultService<List<CategoryOutput>>> GetSubCategoriesAsync(int id)
         {
             ResultService<List<CategoryOutput>> result = new();
@@ -166,7 +166,7 @@ namespace Services
             ResultService<bool> result = new();
             try
             {
-                result.Result=false;
+                result.Result = false;
                 if (!await _categoryrepository.IsExist(id))
                 {
                     result.ErrorField = nameof(id);
@@ -191,7 +191,7 @@ namespace Services
                     result.Result = true;
                     result.Code = ResultStatusCode.Ok;
                     return result;
-                } 
+                }
                 result.Code = ResultStatusCode.BadRequest;
                 result.Messege = "category not Deleted";
                 return result;
@@ -206,8 +206,29 @@ namespace Services
 
         public async Task<bool> HaseSubCategoriesAsync(int id) =>
             await _categoryrepository.GetQuery().Where(x => x.BaseCategoryID == id).AnyAsync();
+        public async Task<PagedList<Course>> GetCourses(int CatId, CategoryCoursesParams Params)
+        {
+            var Query = _coursesrepository.GetQuery()
+            .Where(c => c.CategoryId == CatId && c.Price >= Params.LowerPrice && c.Price <= Params.HigherPrice);
+            if (Params.Orderby == CategoryCoursesParams.Ordaring.Rating)
+            {
+                Query = Query.Include(r=>r.Ratings).OrderByDescending(c => c.Ratings.Average(s => (int)s.RatingStar));
+            }
+            if (Params.Orderby == CategoryCoursesParams.Ordaring.popular)
+            {
+                Query = Query.Include(r=>r.FavoriteByList).OrderByDescending(x => x.FavoriteByList.Count);
+            }
+            if (Params.Orderby == CategoryCoursesParams.Ordaring.Price)
+            {
+                Query = Query.OrderBy(x => x.Price);
+            }
+            if (Params.Orderby == CategoryCoursesParams.Ordaring.Student)
+            {
+                Query = Query.Include(r=>r.Students).OrderByDescending(x => x.Students.Count);
+            }
+            return await PagedList<Course>.CreatePagingListAsync(Query, Params.PageNumber, Params.PageSize);
+        }
     }
-
     public interface ICategoryServices
     {
         public Task<ResultService<CategoryOutput>> GetCategoryByIdAsync(int id);
@@ -217,7 +238,6 @@ namespace Services
         public Task<ResultService<List<CategoryOutput>>> GetSubCategoriesAsync(int id);
         public Task<ResultService<List<CategoryOutput>>> GetTopLevelCategoriesAsync();
         public Task<ResultService<CategoryOutput>> GetParentAsync(int childid);
-
-
+        public Task<PagedList<Course>> GetCourses(int CatId, CategoryCoursesParams Params);
     }
 }

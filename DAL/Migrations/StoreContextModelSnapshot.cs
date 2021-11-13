@@ -206,6 +206,9 @@ namespace DAL.Migrations
                     b.Property<string>("OverViewDescription")
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
+
                     b.Property<int>("TeacherId")
                         .HasColumnType("INTEGER");
 

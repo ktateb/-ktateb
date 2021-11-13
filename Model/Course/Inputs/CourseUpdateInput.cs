@@ -13,6 +13,7 @@ namespace Model.Course.Inputs
         public string LearnListDescription { get; set; }
         public string ThisCourseFor { get; set; }
         public string PreRequerment { get; set; } 
+        public double Price { get; set; }
         public int CategoryId { get; set; }
     }
     public class CourseUpdateInputValidator : AbstractValidator<CourseUpdateInput>

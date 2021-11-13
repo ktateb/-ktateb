@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20211030173433_InitialCreate")]
+    [Migration("20211113133237_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -208,6 +208,9 @@ namespace DAL.Migrations
                     b.Property<string>("OverViewDescription")
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
+
                     b.Property<int>("TeacherId")
                         .HasColumnType("INTEGER");
 
@@ -305,8 +308,8 @@ namespace DAL.Migrations
                         .IsUnicode(true)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Gender")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Gender")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("LastName")
                         .IsUnicode(true)

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Controllers.Common;
 using AutoMapper;
+using Common.Services;
 using DAL.Entities.Courses;
 using DAL.Entities.Teachers;
 using Microsoft.AspNetCore.Authorization;
@@ -25,31 +26,21 @@ namespace API.Controllers
             _mapper = mapper;
         }
         [HttpGet("{UserName}")]
-        public async Task<ActionResult<TeacherOutput>> GetTeacherInfo(string UserName)
-        {
-            var teacher = await _teacherService.GetTeacherInfoAsync(UserName);
-            if (teacher == null)
-                return NotFound("no Teacher with " + UserName + " UserName found");
-            return Ok(_mapper.Map<Teacher, TeacherOutput>(teacher));
-        }
+        public async Task<ActionResult<ResultService<TeacherOutput>>> GetTeacherInfo(string UserName) =>
+            GetResult<TeacherOutput>(await _teacherService.GetTeacherInfoAsync(UserName));
+
+        [Authorize(Roles = "Teacher")]
+        [HttpGet("Me")]
+        public async Task<ActionResult<ResultService<TeacherOutput>>> Me() =>
+             GetResult<TeacherOutput>(await _teacherService.GetTeacherInfoAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).UserName));
+
         [HttpGet("{UserName}/Courses")]
         public async Task<List<TeacherCourseOutput>> GetTeacherCourses(string UserName) =>
             _mapper.Map<List<Course>, List<TeacherCourseOutput>>(await _teacherService.GetTeacherCoursesAsync(UserName));
 
         [Authorize(Roles = "Teacher")]
         [HttpPost("Update")]
-        public async Task<ActionResult> Update(TeacherUpdateInput teacher)
-        {
-            var userId=(await _accountService.GetUserByUserClaim(HttpContext.User)).Id;
-            var techerid = await _teacherService.GetTeacherIdOrDefaultAsync(userId);
-            if (default == techerid)
-                return Unauthorized();
-            var teacherToUpdate = _mapper.Map<TeacherUpdateInput, Teacher>(teacher); 
-            teacherToUpdate.Id = techerid;
-            teacherToUpdate.UserId=userId;
-            if (await _teacherService.UpdateTeacherInfoAsync(teacherToUpdate))
-                return Ok("Done");
-            return BadRequest();
-        }
+        public async Task<ActionResult<ResultService<TeacherOutput>>> Update(TeacherUpdateInput teacher) =>
+            GetResult<TeacherOutput>(await _teacherService.UpdateTeacherInfoAsync(teacher, (await _accountService.GetUserByUserClaim(HttpContext.User)).Id));
     }
 }

@@ -18,7 +18,8 @@ namespace Services.Profiles
                 .ForMember(dest => dest.LearnListDescription, opt => opt.MapFrom(src => src.LearnListDescription))
                 .ForMember(dest => dest.ThisCourseFor, opt => opt.MapFrom(src => src.ThisCourseFor))
                 .ForMember(dest => dest.CourseRequerment, opt => opt.MapFrom(src => src.PreRequerment))
-                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId));
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId)) 
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
             CreateMap<CourseUpdateInput, Course>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -27,7 +28,8 @@ namespace Services.Profiles
                 .ForMember(dest => dest.LearnListDescription, opt => opt.MapFrom(src => src.LearnListDescription))
                 .ForMember(dest => dest.ThisCourseFor, opt => opt.MapFrom(src => src.ThisCourseFor))
                 .ForMember(dest => dest.CourseRequerment, opt => opt.MapFrom(src => src.PreRequerment))
-                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId));
+                .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
 
             CreateMap<Course, CourseOutput>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
@@ -39,7 +41,8 @@ namespace Services.Profiles
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.CategoryId))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
                 .ForMember(dest => dest.TeacherUserName, opt => opt.MapFrom(src => src.Teacher.User.UserName))
-                .ForMember(dest => dest.TeacherDisplayrName, opt => opt.MapFrom(src => src.Teacher.User.FullName));
+                .ForMember(dest => dest.TeacherDisplayrName, opt => opt.MapFrom(src => src.Teacher.User.FullName))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
             CreateMap<Course, TeacherCourseOutput>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Tilte, opt => opt.MapFrom(src => src.Name))

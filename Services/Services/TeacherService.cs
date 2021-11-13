@@ -5,49 +5,65 @@ using DAL.Entities.Teachers;
 using DAL.Repositories;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Common.Services;
+using Model.Teacher.Outputs;
+using AutoMapper;
+using Model.Teacher.Inputs;
+
 namespace Services
 {
     public class TeacherService : ITeacherService
     {
         private readonly IGenericRepository<Teacher> _ITeacherRepository;
         private readonly IGenericRepository<Course> _iCourseRepository;
-        public TeacherService(IGenericRepository<Teacher> ITeacherRepository, IGenericRepository<Course> iCourseRepository)
+        private readonly IMapper _mapper;
+        public TeacherService(IMapper mapper, IGenericRepository<Teacher> ITeacherRepository, IGenericRepository<Course> iCourseRepository)
         {
-            
+            _mapper = mapper;
             _ITeacherRepository = ITeacherRepository;
             _iCourseRepository = iCourseRepository;
         }
-
-        public async Task<Teacher> GetTeacherInfoAsync(int TeacherId) =>
-            await _ITeacherRepository.GetQuery().Where(t => t.Id == TeacherId).FirstOrDefaultAsync();
-      
-        public async Task<Teacher> GetTeacherInfoAsync(string UserName) =>
-            await _ITeacherRepository.GetQuery().Where(t => t.User.NormalizedUserName.Equals(UserName.ToUpper())).FirstOrDefaultAsync();
-      
-        public async Task<List<Course>> GetTeacherCoursesAsync(int TeacherId) =>
-           await _iCourseRepository.GetQuery().Where(c => c.TeacherId == TeacherId).ToListAsync();
-      
+        public async Task<ResultService<TeacherOutput>> GetTeacherInfoAsync(string UserName)
+        {
+            ResultService<TeacherOutput> result = new ();
+            var teacher = await _ITeacherRepository.GetQuery().Where(t => t.User.NormalizedUserName.Equals(UserName.ToUpper())).FirstOrDefaultAsync();
+            if (teacher == null)
+                result.SetCode(ResultStatusCode.NotFound).SetMessege("no Teacher with " + UserName + " UserName found");
+            else
+                result.SetResult(_mapper.Map<Teacher, TeacherOutput>(teacher));
+            return result;
+        }
         public async Task<List<Course>> GetTeacherCoursesAsync(string username) =>
             await _iCourseRepository.GetQuery().Where(c => c.Teacher.User.NormalizedUserName.Equals(username.ToUpper())).ToListAsync();
-      
+
         public async Task<int> GetTeacherIdOrDefaultAsync(string UserId) =>
           await _ITeacherRepository.GetQuery().Where(t => t.UserId.Equals(UserId)).Select(t => t.Id).FirstOrDefaultAsync();
-      
-        public async Task<string> GetUserIdAsync(int TeacherId) =>
-            await _ITeacherRepository.GetQuery().Where(t => t.Id == TeacherId).Select(t => t.UserId).FirstOrDefaultAsync();
-      
-        public async Task<bool> UpdateTeacherInfoAsync(Teacher teacher) =>
-            await _ITeacherRepository.UpdateAsync(teacher);
- 
+        public async Task<ResultService<TeacherOutput>> UpdateTeacherInfoAsync(TeacherUpdateInput teacher, string userId)
+        {
+            try
+            {
+                ResultService<TeacherOutput> result = new();
+                var techerid = await GetTeacherIdOrDefaultAsync(userId);
+                if (default == techerid)
+                    return result.SetCode(ResultStatusCode.NotFound).SetMessege("Not Found 404");
+                var teacherToUpdate = _mapper.Map<TeacherUpdateInput, Teacher>(teacher);
+                teacherToUpdate.Id = techerid;
+                teacherToUpdate.UserId = userId;
+                if (await _ITeacherRepository.UpdateAsync(teacherToUpdate))
+                    return result.SetResult(_mapper.Map<Teacher, TeacherOutput>(teacherToUpdate)).SetMessege("Done");
+                return result.SetMessege("Data not updated").SetCode(ResultStatusCode.BadRequest);
+            }
+            catch
+            {
+                return ResultService<TeacherOutput>.GetErrorResult();
+            }
+        }
     }
     public interface ITeacherService
-    { 
-        public Task<string> GetUserIdAsync(int TeacherId);
+    {
         public Task<int> GetTeacherIdOrDefaultAsync(string UserId);
-        public Task<Teacher> GetTeacherInfoAsync(int TeacherId);
-        public Task<Teacher> GetTeacherInfoAsync(string UserName);
-        public Task<List<Course>> GetTeacherCoursesAsync(int TeacherId);
+        public Task<ResultService<TeacherOutput>> GetTeacherInfoAsync(string UserName);
         public Task<List<Course>> GetTeacherCoursesAsync(string username);
-        public Task<bool> UpdateTeacherInfoAsync(Teacher teacher);
+        public Task<ResultService<TeacherOutput>> UpdateTeacherInfoAsync(TeacherUpdateInput teacher, string userId);
     }
 }

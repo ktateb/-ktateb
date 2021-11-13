@@ -23,6 +23,7 @@ namespace DAL.Entities.Courses
         public int TeacherId { get; set; }
         public virtual Category Category { get; set; }
         public int CategoryId { get; set; }
+        public double Price { get; set; }
         public virtual ICollection<CourseSection> CourseSections { get; set; }
         public virtual ICollection<StudentCourse> Students { get; set; }
         public virtual ICollection<Rating> Ratings { get; set; }
