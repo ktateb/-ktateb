@@ -8,6 +8,8 @@ using DAL.Entities.Ratings;
 using DAL.Entities.StudentCourses;
 using DAL.Entities.Categories;
 using DAL.Entities.Teachers;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace DAL.Entities.Courses
 {
@@ -23,8 +25,20 @@ namespace DAL.Entities.Courses
         public int TeacherId { get; set; }
         public virtual Category Category { get; set; }
         public int CategoryId { get; set; }
-        public double Price { get; set; }
+
+        [NotMapped]
+        public double Price
+        {
+            get
+            {
+                if (PriceHistory == null || PriceHistory.Count == 0)
+                    return default;
+                return PriceHistory.Where(s => s.StartedApplyDate <= DateTime.Now).OrderByDescending(s => s.StartedApplyDate).Select(s => s.Price).FirstOrDefault();
+            }
+        }
+
         public virtual ICollection<CourseSection> CourseSections { get; set; }
+        public virtual List<CoursePriceHistory> PriceHistory { get; set; }
         public virtual ICollection<StudentCourse> Students { get; set; }
         public virtual ICollection<Rating> Ratings { get; set; }
         public virtual List<Comment> Comments { get; set; }

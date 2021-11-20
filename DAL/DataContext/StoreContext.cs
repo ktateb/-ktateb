@@ -19,7 +19,6 @@ namespace DAL.DataContext
     {
         public StoreContext(DbContextOptions options) : base(options)
         { }
-
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Comment> Comments { get; set; }
@@ -40,10 +39,7 @@ namespace DAL.DataContext
         public DbSet<ReportUser> ReportUsers { get; set; }
         public DbSet<StudentCourse> StudentCourses { get; set; }
         public DbSet<StudentFavoriteCourse> StudentFavoriteCourses { get; set; }
-
-
-
-
+        public DbSet<CoursePriceHistory> CoursePriceHistory { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Message>()

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20211113133237_InitialCreate")]
+    [Migration("20211114152737_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -208,9 +208,6 @@ namespace DAL.Migrations
                     b.Property<string>("OverViewDescription")
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
                     b.Property<int>("TeacherId")
                         .HasColumnType("INTEGER");
 
@@ -224,6 +221,28 @@ namespace DAL.Migrations
                     b.HasIndex("TeacherId");
 
                     b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("DAL.Entities.Courses.CoursePriceHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("REAL");
+
+                    b.Property<DateTime>("StartedApplyDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("CoursePriceHistory");
                 });
 
             modelBuilder.Entity("DAL.Entities.Courses.CourseSection", b =>
@@ -938,6 +957,17 @@ namespace DAL.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("DAL.Entities.Courses.CoursePriceHistory", b =>
+                {
+                    b.HasOne("DAL.Entities.Courses.Course", "Course")
+                        .WithMany("PriceHistory")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("DAL.Entities.Courses.CourseSection", b =>
                 {
                     b.HasOne("DAL.Entities.Courses.Course", "Course")
@@ -1224,6 +1254,8 @@ namespace DAL.Migrations
                     b.Navigation("CourseSections");
 
                     b.Navigation("FavoriteByList");
+
+                    b.Navigation("PriceHistory");
 
                     b.Navigation("Ratings");
 

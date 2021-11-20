@@ -63,7 +63,6 @@ namespace API.Controllers
         /// </summary>  
         /// <param name="Id">Category Id</param>
         /// <param name="Params">for orderBy (popular = 1, Rating= 2, Price= 3,Students= 4)</param>
-         
         [HttpPost("{Id}/Courses")]
         public async Task<List<CourseOutput>> Get(int Id, CategoryCoursesParams Params)
         {

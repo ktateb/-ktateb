@@ -1,12 +1,15 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Controllers.Common;
 using API.Helpers;
 using AutoMapper;
+using Common.Services;
 using DAL.Entities.Comments;
 using DAL.Entities.Courses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using Model.Comment.Outputs;
 using Model.Course.Inputs;
 using Model.Course.Outputs;
@@ -30,96 +33,43 @@ namespace API.Controllers
             _mapper = mapper;
         }
         [HttpGet("{Id}")]
-        public async Task<ActionResult<CourseOutput>> GetCourseInfo(int Id)
-        {
-            var Course = _mapper.Map<Course, CourseOutput>(await _CourseService.GetCourseInfoAsync(Id));
+        public async Task<ActionResult<ResultService<CourseOutput>>> GetCourseInfo(int Id) =>
+            GetResult<CourseOutput>(await _CourseService.GetCourseInfoAsync(Id));
+        [Authorize(Roles = "Teacher")]
+        [HttpPost("{CourseId}/PriceHistory")]
+        public async Task<ActionResult<ResultService<List<PriceHistoryOutput>>>> UpdatePrice(int CourseId) =>
+            GetResult<List<PriceHistoryOutput>>(await _CourseService.GetPriceHistoryAsync(CourseId));
 
-            if (Course == null)
-            {
-                return NotFound("Course not found");
-            }
-            return Ok(Course);
-        }
-        [HttpGet("{Id}/Sections")]
-        public async Task<ActionResult<List<CourseSectionOutput>>> GetCourseSection(int Id)
+        [HttpGet("{CourseId}/Sections")]
+        public async Task<ActionResult<ResultService<List<CourseSectionOutput>>>> GetCourseSection(int CourseId) =>
+            GetResult<List<CourseSectionOutput>>(await _CourseService.GetCourseSectionAsync(CourseId));
+        [HttpPost("{CourseId}/Comments")]
+        public async Task<List<CommentOutput>> Get(int CourseId, Paging Params)
         {
-            if (!(await _CourseService.IsExistAsync(Id)))
-            {
-                return NotFound("Course not found");
-            }
-            return Ok(_mapper.Map<List<CourseSection>, List<CourseSectionOutput>>(await _CourseService.GetCourseSectionAsync(Id)));
-        }
-        [HttpPost("{Id}/Comments")]
-        public async Task<List<CommentOutput>> Get(int Id, Paging Params)
-        {
-            var comments = await _CourseService.GetCommentsAsync(Id, Params);
+            var comments = await _CourseService.GetCommentsAsync(CourseId, Params);
             Response.AddPagination(comments.CurrentPage, comments.ItemsPerPage, comments.TotalItems, comments.TotalPages);
             return _mapper.Map<List<Comment>, List<CommentOutput>>(comments);
         }
         [Authorize(Roles = "Teacher")]
         [HttpPost("Create")]
-        public async Task<ActionResult> Create(CourseCreateInput Course)
-        {
-            var techerId = await _TeacherService.GetTeacherIdOrDefaultAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).Id);
-            Course course = _mapper.Map<CourseCreateInput, Course>(Course);
-            course.TeacherId = techerId;
-            course.CreatedDate = System.DateTime.Now;
-            if (await _CourseService.CreateCoursesAsync(course))
-                return Ok("Done");
-            return BadRequest();
+        public async Task<ActionResult<ResultService<CourseOutput>>> Create(CourseCreateInput Course) =>
+            GetResult<CourseOutput>(await _CourseService.CreateCoursesAsync(Course, await _TeacherService.GetTeacherIdOrDefaultAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).Id)));
 
-        }
         [Authorize(Roles = "Teacher")]
         [HttpPost("Update")]
-        public async Task<ActionResult> Update(CourseUpdateInput CourseInput)
-        {
-            var CoursetecherIdTask = _CourseService.GetTeacherIdOrDefultAsync(CourseInput.Id);
-            var createdateTask = _CourseService.GetCourseCreatedDateCourseAsync(CourseInput.Id);
-            var AuthtecherIdTask = _TeacherService.GetTeacherIdOrDefaultAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).Id);
+        public async Task<ActionResult<ResultService<bool>>> Update(CourseUpdateInput CourseInput) =>
+             GetResult<bool>(await _CourseService.UpdateCourseInfoAsync(CourseInput, await _TeacherService.GetTeacherIdOrDefaultAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).Id)));
 
-            var CoursetecherId = await CoursetecherIdTask;
-            var AuthtecherId = await AuthtecherIdTask;
-            if (CoursetecherId == default)
-            {
-                return NotFound("Course not found");
-            }
-            if (CoursetecherId != AuthtecherId)
-            {
-                return Unauthorized();
-            }
-            Course course = _mapper.Map<CourseUpdateInput, Course>(CourseInput);
-            course.TeacherId = CoursetecherId;
-            course.CreatedDate = await createdateTask;
-            if (await _CourseService.UpdateCourseInfoAsync(course))
-                return Ok("Done");
-            return BadRequest();
-        }
 
         [Authorize(Roles = "Teacher")]
         [HttpDelete("Delete")]
-        public async Task<ActionResult> Delete(int Id)
-        {
+        public async Task<ActionResult<ResultService<bool>>> Delete(int Id) =>
+            GetResult<bool>(await _CourseService.DeleteCourseAsync(Id, await _TeacherService.GetTeacherIdOrDefaultAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).Id)));
 
-            var CoursetecherIdTask = _CourseService.GetTeacherIdOrDefultAsync(Id);
-            var AuthtecherIdTask = _TeacherService.GetTeacherIdOrDefaultAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).Id);
-            var HasStudentTask = _CourseService.HasStudentAsync(Id);
-            var CoursetecherId = await CoursetecherIdTask;
-            var AuthtecherId = await AuthtecherIdTask;
-            if (default == CoursetecherId)
-            {
-                return NotFound("Course not found");
-            }
-            if (CoursetecherId != AuthtecherId)
-            {
-                return Unauthorized("You are not the Owner of this course");
-            }
-            if (await HasStudentTask)
-            {
-                return BadRequest("this course Has Students");
-            }
-            if (await _CourseService.DeleteCourseAsync(Id))
-                return Ok("Done");
-            return BadRequest();
-        }
+        [Authorize(Roles = "Teacher")]
+        [HttpPost("{CourseId}/UpdatePrice")]
+        public async Task<ActionResult<ResultService<bool>>> UpdatePrice(int CourseId, double newprice) =>
+            GetResult<bool>(await _CourseService.CreateNewPriceHistory(CourseId, newprice, await _TeacherService.GetTeacherIdOrDefaultAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).Id)));
+
     }
 }

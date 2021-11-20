@@ -1,3 +1,4 @@
+using System;
 using DAL.Entities.Categories;
 using DAL.DataContext;
 using System.Collections.Generic;
@@ -208,8 +209,8 @@ namespace Services
             await _categoryrepository.GetQuery().Where(x => x.BaseCategoryID == id).AnyAsync();
         public async Task<PagedList<Course>> GetCourses(int CatId, CategoryCoursesParams Params)
         {
-            var Query = _coursesrepository.GetQuery()
-            .Where(c => c.CategoryId == CatId && c.Price >= Params.LowerPrice && c.Price <= Params.HigherPrice);
+            var Query = _coursesrepository.GetQuery().Include(c=>c.PriceHistory)
+            .Where(c => c.CategoryId == CatId&& c.PriceHistory.Where(s => s.StartedApplyDate <= DateTime.Now).OrderByDescending(s => s.StartedApplyDate).Select(s => s.Price).FirstOrDefault() >= Params.LowerPrice && c.PriceHistory.Where(s => s.StartedApplyDate <= DateTime.Now).OrderByDescending(s => s.StartedApplyDate).Select(s => s.Price).FirstOrDefault() <= Params.HigherPrice);
             if (Params.Orderby == CategoryCoursesParams.Ordaring.Rating)
             {
                 Query = Query.Include(r=>r.Ratings).OrderByDescending(c => c.Ratings.Average(s => (int)s.RatingStar));
@@ -220,7 +221,7 @@ namespace Services
             }
             if (Params.Orderby == CategoryCoursesParams.Ordaring.Price)
             {
-                Query = Query.OrderBy(x => x.Price);
+                Query = Query.OrderBy(x => x.PriceHistory.Where(s => s.StartedApplyDate <= DateTime.Now).OrderByDescending(s => s.StartedApplyDate).Select(s => s.Price).FirstOrDefault());
             }
             if (Params.Orderby == CategoryCoursesParams.Ordaring.Student)
             {

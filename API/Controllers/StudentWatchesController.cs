@@ -40,12 +40,12 @@ namespace API.Controllers
         }
         [Authorize]
         [HttpPost("AddTolist")]
-        public async Task<ActionResult<ResultService<bool>>> AddTolist(int id) =>
-            GetResult<bool>(await _iStudentWatchesService.AddToWatchedAsync(id, await _iaccountService.GetUserByUserClaim(HttpContext.User)));
+        public async Task<ActionResult<ResultService<bool>>> AddTolist(int VedioId) =>
+            GetResult<bool>(await _iStudentWatchesService.AddToWatchedAsync(VedioId, await _iaccountService.GetUserByUserClaim(HttpContext.User)));
         [Authorize]
         [HttpPost("RemoveFromList")]
-        public async Task<ActionResult<ResultService<bool>>> RemoveFromList(int id) =>
-            GetResult<bool>(await _iStudentWatchesService.RemoveFromWatchedAsync(id, await _iaccountService.GetUserByUserClaim(HttpContext.User)));
+        public async Task<ActionResult<ResultService<bool>>> RemoveFromList(int VedioId) =>
+            GetResult<bool>(await _iStudentWatchesService.RemoveFromWatchedAsync(VedioId, await _iaccountService.GetUserByUserClaim(HttpContext.User)));
 
     }
 }

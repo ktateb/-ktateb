@@ -29,7 +29,7 @@ namespace API.Controllers
         }
         [Authorize]
         [HttpPost("List")]
-        public async Task<ActionResult<List<FavoriteOutput>>> GetWatchedList(Paging Params)
+        public async Task<ActionResult<List<FavoriteOutput>>> GetFavoriteList(Paging Params)
         {
             var user = await _iaccountService.GetUserByUserClaim(HttpContext.User);
             var FavoriteList = await _iFavoriteCoursesService.GetFavoriteListAsync(user, Params);
@@ -38,11 +38,11 @@ namespace API.Controllers
         }
         [Authorize]
         [HttpPost("AddTolist")]
-        public async Task<ActionResult<ResultService<bool>>> AddTolist(int id) =>
-            GetResult<bool>(await _iFavoriteCoursesService.AddToFavoriteAsync(id, await _iaccountService.GetUserByUserClaim(HttpContext.User)));
+        public async Task<ActionResult<ResultService<bool>>> AddTolist(int CourseId) =>
+            GetResult<bool>(await _iFavoriteCoursesService.AddToFavoriteAsync(CourseId, await _iaccountService.GetUserByUserClaim(HttpContext.User)));
         [Authorize]
         [HttpPost("RemoveFromList")]
-        public async Task<ActionResult<ResultService<bool>>> RemoveFromList(int id) =>
-            GetResult<bool>(await _iFavoriteCoursesService.RemoveFromFavoriteAsync(id, await _iaccountService.GetUserByUserClaim(HttpContext.User)));
+        public async Task<ActionResult<ResultService<bool>>> RemoveFromList(int CourseId) =>
+            GetResult<bool>(await _iFavoriteCoursesService.RemoveFromFavoriteAsync(CourseId, await _iaccountService.GetUserByUserClaim(HttpContext.User)));
     }
 }

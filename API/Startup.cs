@@ -123,6 +123,9 @@ namespace API
             services.AddScoped(typeof(IGenericRepository<SubComment>), typeof(GenericRepository<SubComment>));
             services.AddScoped(typeof(IGenericRepository<StudentWatchedVedio>), typeof(GenericRepository<StudentWatchedVedio>));
             services.AddScoped(typeof(IGenericRepository<StudentFavoriteCourse>), typeof(GenericRepository<StudentFavoriteCourse>));
+            services.AddScoped(typeof(IGenericRepository<CoursePriceHistory>), typeof(GenericRepository<CoursePriceHistory>));
+            
+           
             services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ICourseSectionService, CourseSectionService>();
