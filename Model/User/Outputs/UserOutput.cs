@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DAL.Entities.Identity;
 
@@ -14,6 +15,8 @@ namespace Model.User.Outputs
         public string PhoneNumber { get; set; }
         public string Gender { get; set; }
         public string Token { get; set; }
+        public string Country { get; set; }
+        public DateTime Birhtday { get; set; }
         public string DisplayName { get; set; }
         public List<string> Roles { get; set; }
 
