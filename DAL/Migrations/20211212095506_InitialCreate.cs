@@ -481,16 +481,15 @@ namespace DAL.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     RegistDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UserId1 = table.Column<string>(type: "TEXT", nullable: true),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", nullable: true),
                     CourseId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StudentCourses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StudentCourses_AspNetUsers_UserId1",
-                        column: x => x.UserId1,
+                        name: "FK_StudentCourses_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -597,6 +596,7 @@ namespace DAL.Migrations
                     ShortDescription = table.Column<string>(type: "TEXT", nullable: true),
                     TimeInMinute = table.Column<int>(type: "INTEGER", nullable: false),
                     URL = table.Column<string>(type: "TEXT", nullable: true),
+                    ImgeURL = table.Column<string>(type: "TEXT", nullable: true),
                     AddedDate = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
@@ -924,9 +924,9 @@ namespace DAL.Migrations
                 column: "CourseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentCourses_UserId1",
+                name: "IX_StudentCourses_UserId",
                 table: "StudentCourses",
-                column: "UserId1");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StudentFavoriteCourses_CourseId",

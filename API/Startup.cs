@@ -114,7 +114,7 @@ namespace API
             services.AddScoped<ITokenService, TokenService>();
             ///// sarya Services
             services.AddScoped(typeof(IGenericRepository<Teacher>), typeof(GenericRepository<Teacher>));
-            services.AddScoped(typeof(IGenericRepository<Category>), typeof(GenericRepository<Category>));
+            services.AddScoped(typeof(IGenericRepository<Category>), typeof(GenericRepository<Category>));  
             services.AddScoped(typeof(IGenericRepository<Course>), typeof(GenericRepository<Course>));
             services.AddScoped(typeof(IGenericRepository<CourseSection>), typeof(GenericRepository<CourseSection>));
             services.AddScoped(typeof(IGenericRepository<CourseVedio>), typeof(GenericRepository<CourseVedio>));
@@ -123,9 +123,7 @@ namespace API
             services.AddScoped(typeof(IGenericRepository<SubComment>), typeof(GenericRepository<SubComment>));
             services.AddScoped(typeof(IGenericRepository<StudentWatchedVedio>), typeof(GenericRepository<StudentWatchedVedio>));
             services.AddScoped(typeof(IGenericRepository<StudentFavoriteCourse>), typeof(GenericRepository<StudentFavoriteCourse>));
-            services.AddScoped(typeof(IGenericRepository<CoursePriceHistory>), typeof(GenericRepository<CoursePriceHistory>));
-            
-           
+            services.AddScoped(typeof(IGenericRepository<CoursePriceHistory>), typeof(GenericRepository<CoursePriceHistory>)); 
             services.AddScoped<ICategoryServices, CategoryServices>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ICourseSectionService, CourseSectionService>();

@@ -14,6 +14,7 @@ using Common.Services;
 using Model.Course.Outputs;
 using Model.CourseSection.Outputs;
 using Model.Course.Inputs;
+using DAL.Entities.Identity;
 
 namespace Services
 {
@@ -51,6 +52,21 @@ namespace Services
                 return ResultService<CourseOutput>.GetErrorResult();
             }
         }
+        public async Task<ResultService<CourseOutput>> GetCourseInfoAsync(int Id, string userid)
+        {
+            var result = await GetCourseInfoAsync(Id);
+            if (result.Code != ResultStatusCode.Ok)
+                return result;
+            try
+            {
+                result.Result.IsOwned = await _iStudentCourseRepository.GetQuery().Where(c => c.UserId == userid && c.CourseId == Id).AnyAsync();
+                return result;
+            }
+            catch
+            {
+                return ResultService<CourseOutput>.GetErrorResult();
+            }
+        }
         public async Task<ResultService<List<CourseSectionOutput>>> GetCourseSectionAsync(int CourseId)
         {
             try
@@ -71,6 +87,8 @@ namespace Services
             try
             {
                 var Result = new ResultService<CourseOutput>();
+                if (Course.Price < 0)
+                    return Result.SetCode(ResultStatusCode.BadRequest).SetMessege("new price is less than zero").SetErrorField(nameof(Course.Price));
                 Course CourseToCreate = _mapper.Map<CourseCreateInput, Course>(Course);
                 CourseToCreate.TeacherId = techerId;
                 CourseToCreate.CreatedDate = DateTime.Now;
@@ -109,6 +127,7 @@ namespace Services
         {
             try
             {
+
 
                 var HasStudentTask = HasStudentAsync(CourseId);
                 var Result = await NeedToUpdateOrDelete<bool>(CourseId, AuthtecherId);
@@ -164,8 +183,11 @@ namespace Services
         {
             try
             {
-
                 var Result = await NeedToUpdateOrDelete<bool>(CourseId, AuthTecherId);
+                if (newprice < 0)
+                {
+                    return Result.SetResult(false).SetCode(ResultStatusCode.BadRequest).SetMessege("new price is less than zero").SetErrorField(nameof(newprice));
+                }
                 if (Result.Code != ResultStatusCode.Ok)
                 {
                     return Result.SetResult(false);
@@ -206,7 +228,33 @@ namespace Services
                 return ResultService<List<PriceHistoryOutput>>.GetErrorResult();
             }
         }
+        public async Task<ResultService<bool>> FreeRegistAsync(int Id, string userId)
+        {
+            ResultService<bool> result = new();
+            if (!(await _iStudentCourseRepository.GetQuery().Where(c => c.UserId == userId && c.CourseId == Id).AnyAsync()))
+            {
+                try
+                {
+                    StudentCourse newobg = new()
+                    {
+                        CourseId = Id,
+                        UserId = userId,
+                        RegistDate = DateTime.Now
+                    };
+                    if (await _iStudentCourseRepository.CreateAsync(newobg))
+                        return result.SetResult(true);
+                    else
+                        return result.SetCode(ResultStatusCode.BadRequest).SetResult(false).SetMessege("Not Registed ,please try agin");
+                }
+                catch
+                {
+                    return ResultService<bool>.GetErrorResult().SetResult(false);
+                }
+            }
+            else
+                return result.SetCode(ResultStatusCode.BadRequest).SetResult(false).SetMessege("You are Owne have this course");
 
+        }
         private async Task<bool> IsExistAsync(int Id) =>
           await _iCourseRepository.GetQuery().Where(c => c.Id == Id).AnyAsync();
 
@@ -214,7 +262,7 @@ namespace Services
            await _iCourseRepository.GetQuery().Where(c => c.Id == CourseId).Select(c => c.TeacherId).FirstOrDefaultAsync();
 
         private async Task<DateTime> GetCourseCreatedDateCourseAsync(int Id) =>
-            await _iCourseRepository.GetQuery().Select(c => c.CreatedDate).FirstOrDefaultAsync();
+            await _iCourseRepository.GetQuery().Where(c => c.Id == Id).Select(c => c.CreatedDate).FirstOrDefaultAsync();
 
 
         public async Task<PagedList<Comment>> GetCommentsAsync(int CourseId, Paging Params)
@@ -231,19 +279,16 @@ namespace Services
     public interface ICourseService
     {
         public Task<PagedList<Comment>> GetCommentsAsync(int CourseId, Paging Params);
-
         public Task<int> GetTeacherIdOrDefultAsync(int CourseId);
         public Task<ResultService<CourseOutput>> GetCourseInfoAsync(int Id);
+        public Task<ResultService<bool>> FreeRegistAsync(int Id, string userId);
+        public Task<ResultService<CourseOutput>> GetCourseInfoAsync(int Id, string userid);
         public Task<ResultService<bool>> CreateNewPriceHistory(int CourseId, double newprice, int AuthTecherId);
         public Task<ResultService<List<PriceHistoryOutput>>> GetPriceHistoryAsync(int CourseId);
         public Task<ResultService<List<CourseSectionOutput>>> GetCourseSectionAsync(int CourseId);
-
         public Task<ResultService<CourseOutput>> CreateCoursesAsync(CourseCreateInput Course, int techerId);
-
         public Task<ResultService<bool>> UpdateCourseInfoAsync(CourseUpdateInput CourseInput, int AuthTecherId);
-
         public Task<ResultService<bool>> DeleteCourseAsync(int Id, int AuthTecherId);
-
         public Task<bool> HasStudentAsync(int Id);
     }
 }

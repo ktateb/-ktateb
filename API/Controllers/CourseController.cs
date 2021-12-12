@@ -33,8 +33,14 @@ namespace API.Controllers
             _mapper = mapper;
         }
         [HttpGet("{Id}")]
-        public async Task<ActionResult<ResultService<CourseOutput>>> GetCourseInfo(int Id) =>
-            GetResult<CourseOutput>(await _CourseService.GetCourseInfoAsync(Id));
+        public async Task<ActionResult<ResultService<CourseOutput>>> GetCourseInfo(int Id)
+        {
+            if (HttpContext.User.Identity.IsAuthenticated)
+                return GetResult<CourseOutput>(await _CourseService.GetCourseInfoAsync(Id, (await _accountService.GetUserByUserClaim(HttpContext.User)).Id));
+            else
+                return GetResult<CourseOutput>(await _CourseService.GetCourseInfoAsync(Id));
+
+        }
         [Authorize(Roles = "Teacher")]
         [HttpPost("{CourseId}/PriceHistory")]
         public async Task<ActionResult<ResultService<List<PriceHistoryOutput>>>> UpdatePrice(int CourseId) =>
@@ -54,6 +60,11 @@ namespace API.Controllers
         [HttpPost("Create")]
         public async Task<ActionResult<ResultService<CourseOutput>>> Create(CourseCreateInput Course) =>
             GetResult<CourseOutput>(await _CourseService.CreateCoursesAsync(Course, await _TeacherService.GetTeacherIdOrDefaultAsync((await _accountService.GetUserByUserClaim(HttpContext.User)).Id)));
+
+        [Authorize]
+        [HttpPost("{CourseId}/Regist")]
+        public async Task<ActionResult<ResultService<bool>>> Regist(int CourseId) =>
+            GetResult<bool>(await _CourseService.FreeRegistAsync(CourseId, (await _accountService.GetUserByUserClaim(HttpContext.User)).Id));
 
         [Authorize(Roles = "Teacher")]
         [HttpPost("Update")]

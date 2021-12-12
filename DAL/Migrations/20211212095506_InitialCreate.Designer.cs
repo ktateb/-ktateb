@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20211114152737_InitialCreate")]
+    [Migration("20211212095506_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -274,6 +274,9 @@ namespace DAL.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("AddedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ImgeURL")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("SectionId")
@@ -601,17 +604,14 @@ namespace DAL.Migrations
                     b.Property<DateTime>("RegistDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserId1")
+                    b.Property<string>("UserId")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("StudentCourses");
                 });
@@ -1115,7 +1115,7 @@ namespace DAL.Migrations
 
                     b.HasOne("DAL.Entities.Identity.User", "User")
                         .WithMany("Courses")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Course");
 

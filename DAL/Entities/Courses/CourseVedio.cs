@@ -13,6 +13,7 @@ namespace DAL.Entities.Courses
         public String ShortDescription { get; set; }
         public int TimeInMinute { get; set; }
         public String URL { get; set; }
+        public String ImgeURL { get; set; }
         public DateTime AddedDate { get; set; }
         public virtual ICollection<StudentWatchedVedio> WatchedByList { get; set; }
     }
