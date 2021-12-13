@@ -26,6 +26,29 @@ namespace Services
             _coursesrepository = coursesrepository;
             _mapper = mapper;
         }
+        public CategotyTreeOutput DFS(Category node)
+        {
+            var Result = new CategotyTreeOutput();
+            Result.name = node.CategoryName;
+            Result.Id = node.Id;
+            Result.ParentId = node.BaseCategoryID;
+            Result.Childs = new();
+            foreach (var child in node.SubCategory)
+            {
+                Result.Childs.Add(DFS(child));
+            }
+            return Result;
+        }
+        public async Task<List<CategotyTreeOutput>> GetTree()
+        {
+            var cats = (await _categoryrepository.GetQuery().Include(t => t.SubCategory).ToListAsync()).Where(c => c.BaseCategoryID == null).ToList();
+            var Result = new List<CategotyTreeOutput>();
+            foreach (var child in cats)
+            {
+                Result.Add(DFS(child));
+            }
+            return Result;
+        }
         public async Task<ResultService<List<CategoryOutput>>> GetSubCategoriesAsync(int id)
         {
             ResultService<List<CategoryOutput>> result = new();
@@ -209,15 +232,15 @@ namespace Services
             await _categoryrepository.GetQuery().Where(x => x.BaseCategoryID == id).AnyAsync();
         public async Task<PagedList<Course>> GetCourses(int CatId, CategoryCoursesParams Params)
         {
-            var Query = _coursesrepository.GetQuery().Include(c=>c.PriceHistory)
-            .Where(c => c.CategoryId == CatId&& c.PriceHistory.Where(s => s.StartedApplyDate <= DateTime.Now).OrderByDescending(s => s.StartedApplyDate).Select(s => s.Price).FirstOrDefault() >= Params.LowerPrice && c.PriceHistory.Where(s => s.StartedApplyDate <= DateTime.Now).OrderByDescending(s => s.StartedApplyDate).Select(s => s.Price).FirstOrDefault() <= Params.HigherPrice);
+            var Query = _coursesrepository.GetQuery().Include(c => c.PriceHistory)
+            .Where(c => c.CategoryId == CatId && c.PriceHistory.Where(s => s.StartedApplyDate <= DateTime.Now).OrderByDescending(s => s.StartedApplyDate).Select(s => s.Price).FirstOrDefault() >= Params.LowerPrice && c.PriceHistory.Where(s => s.StartedApplyDate <= DateTime.Now).OrderByDescending(s => s.StartedApplyDate).Select(s => s.Price).FirstOrDefault() <= Params.HigherPrice);
             if (Params.Orderby == CategoryCoursesParams.Ordaring.Rating)
             {
-                Query = Query.Include(r=>r.Ratings).OrderByDescending(c => c.Ratings.Average(s => (int)s.RatingStar));
+                Query = Query.Include(r => r.Ratings).OrderByDescending(c => c.Ratings.Average(s => (int)s.RatingStar));
             }
             if (Params.Orderby == CategoryCoursesParams.Ordaring.popular)
             {
-                Query = Query.Include(r=>r.FavoriteByList).OrderByDescending(x => x.FavoriteByList.Count);
+                Query = Query.Include(r => r.FavoriteByList).OrderByDescending(x => x.FavoriteByList.Count);
             }
             if (Params.Orderby == CategoryCoursesParams.Ordaring.Price)
             {
@@ -225,13 +248,14 @@ namespace Services
             }
             if (Params.Orderby == CategoryCoursesParams.Ordaring.Student)
             {
-                Query = Query.Include(r=>r.Students).OrderByDescending(x => x.Students.Count);
+                Query = Query.Include(r => r.Students).OrderByDescending(x => x.Students.Count);
             }
             return await PagedList<Course>.CreatePagingListAsync(Query, Params.PageNumber, Params.PageSize);
         }
     }
     public interface ICategoryServices
     {
+        public  Task<List<CategotyTreeOutput>> GetTree();
         public Task<ResultService<CategoryOutput>> GetCategoryByIdAsync(int id);
         public Task<ResultService<CategoryOutput>> CreateNewCategoryAsync(CategoryCreateInput category);
         public Task<ResultService<bool>> DeletCategoryAsync(int id);
