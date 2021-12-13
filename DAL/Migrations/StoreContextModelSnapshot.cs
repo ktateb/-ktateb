@@ -283,7 +283,7 @@ namespace DAL.Migrations
                     b.Property<string>("ShortDescription")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TimeInMinute")
+                    b.Property<int>("TimeInSeconds")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("URL")

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    [Migration("20211212095506_InitialCreate")]
+    [Migration("20211212175312_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -285,7 +285,7 @@ namespace DAL.Migrations
                     b.Property<string>("ShortDescription")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("TimeInMinute")
+                    b.Property<int>("TimeInSeconds")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("URL")

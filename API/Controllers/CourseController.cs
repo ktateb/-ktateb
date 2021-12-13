@@ -16,7 +16,7 @@ using Model.Course.Outputs;
 using Model.CourseSection.Outputs;
 using Model.Helper;
 using Services;
-
+using Services.Services;
 namespace API.Controllers
 {
     public class CourseController : BaseController
@@ -24,14 +24,23 @@ namespace API.Controllers
         private readonly ICourseService _CourseService;
         private readonly IAccountService _accountService;
         private readonly ITeacherService _TeacherService;
+
+        private readonly IFavoriteCoursesService _favoriteCoursesService;
+
         private readonly IMapper _mapper;
-        public CourseController(ICourseService CourseService, IAccountService accountService, ITeacherService TeacherService, IMapper mapper)
+        public CourseController(IFavoriteCoursesService iFavoriteCoursesService, ICourseService CourseService, IAccountService accountService, ITeacherService TeacherService, IMapper mapper)
         {
+            _favoriteCoursesService = iFavoriteCoursesService;
             _accountService = accountService;
             _CourseService = CourseService;
             _TeacherService = TeacherService;
             _mapper = mapper;
         }
+        [Authorize]
+        [HttpGet("{Id}/isFavoriteByMe")]
+        public async Task<ActionResult<ResultService<bool>>> isFavoriteByMe(int Id) =>
+             GetResult<bool>(await _favoriteCoursesService.isFavoriteByMe(Id, (await _accountService.GetUserByUserClaim(HttpContext.User)).Id));
+
         [HttpGet("{Id}")]
         public async Task<ActionResult<ResultService<CourseOutput>>> GetCourseInfo(int Id)
         {
@@ -39,8 +48,12 @@ namespace API.Controllers
                 return GetResult<CourseOutput>(await _CourseService.GetCourseInfoAsync(Id, (await _accountService.GetUserByUserClaim(HttpContext.User)).Id));
             else
                 return GetResult<CourseOutput>(await _CourseService.GetCourseInfoAsync(Id));
-
+            
         }
+
+        [HttpGet("{Id}/TotalTimeInSeconds")]
+        public async Task<ActionResult<ResultService<int>>> GetTotalTimeInSeconds(int Id) =>
+            GetResult<int>(await _CourseService.GetTotalTimeInSeconds(Id));
         [Authorize(Roles = "Teacher")]
         [HttpPost("{CourseId}/PriceHistory")]
         public async Task<ActionResult<ResultService<List<PriceHistoryOutput>>>> UpdatePrice(int CourseId) =>

@@ -594,7 +594,7 @@ namespace DAL.Migrations
                     SectionId = table.Column<int>(type: "INTEGER", nullable: false),
                     VedioTitle = table.Column<string>(type: "TEXT", nullable: true),
                     ShortDescription = table.Column<string>(type: "TEXT", nullable: true),
-                    TimeInMinute = table.Column<int>(type: "INTEGER", nullable: false),
+                    TimeInSeconds = table.Column<int>(type: "INTEGER", nullable: false),
                     URL = table.Column<string>(type: "TEXT", nullable: true),
                     ImgeURL = table.Column<string>(type: "TEXT", nullable: true),
                     AddedDate = table.Column<DateTime>(type: "TEXT", nullable: false)

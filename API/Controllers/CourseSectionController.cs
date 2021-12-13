@@ -7,6 +7,9 @@ using Model.CourseSection.Inputs;
 using Services;
 using DAL.Entities.Courses;
 using Microsoft.AspNetCore.Authorization;
+using Model.Vedio;
+using System.Collections.Generic;
+using Common.Services;
 
 namespace API.Controllers
 {
@@ -19,6 +22,7 @@ namespace API.Controllers
         private readonly IMapper _mapper;
         public CourseSectionController(ICourseService CourseService, ICourseSectionService CourseSectionService, IAccountService accountService, ITeacherService TeacherService, IMapper mapper)
         {
+            
             _accountService = accountService;
             _CourseSectionService = CourseSectionService;
             _CourseService = CourseService;
@@ -34,6 +38,23 @@ namespace API.Controllers
                 return NotFound();
             }
             return Ok(_mapper.Map<CourseSection, CourseSectionOutput>(Section));
+        }
+ 
+        [HttpGet("{Id}/TotalTimeInSeconds")]
+        public async Task<ActionResult<ResultService<int>>> GetTotalTimeInSeconds(int Id) =>
+            GetResult<int>(await _CourseSectionService.GetTotalTimeInSeconds(Id));
+
+        [HttpGet("{Id}/vedios")]
+        public async Task<ActionResult<List<VedioListOutput>>> GetVedios(int Id)
+        {
+            var vedios = await _CourseSectionService.GetVediosInfoAsync(Id);
+            if (vedios is null || vedios.Count == 0)
+            {
+                return NotFound();
+            }
+            var result = _mapper.Map<List<CourseVedio>, List<VedioListOutput>>(vedios);
+
+            return Ok(result);
         }
 
         [Authorize(Roles = "Teacher")]

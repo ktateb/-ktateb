@@ -11,7 +11,7 @@ namespace DAL.Entities.Courses
         public int SectionId { get; set; }
         public String VedioTitle { get; set; }
         public String ShortDescription { get; set; }
-        public int TimeInMinute { get; set; }
+        public int TimeInSeconds { get; set; }
         public String URL { get; set; }
         public String ImgeURL { get; set; }
         public DateTime AddedDate { get; set; }

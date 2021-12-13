@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 namespace Model.Course.Inputs
 {
     public class CourseFile
-    {
+    { 
         public IFormFile File { get; set; }
     }
 }

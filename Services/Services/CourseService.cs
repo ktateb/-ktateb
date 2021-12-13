@@ -24,10 +24,13 @@ namespace Services
         private readonly IGenericRepository<CourseSection> _iCourseSectionRepository;
         private readonly IGenericRepository<StudentCourse> _iStudentCourseRepository;
         private readonly IGenericRepository<CoursePriceHistory> _iCoursePriceHistory;
+
+        private readonly IGenericRepository<CourseVedio> _iCourseVedio;
         private readonly IGenericRepository<Comment> _iCommentRepository;
         private readonly IMapper _mapper;
-        public CourseService(IMapper mapper, IGenericRepository<CoursePriceHistory> iCoursePriceHistory, IGenericRepository<Comment> iCommentRepository, IGenericRepository<StudentCourse> iStudentCourseRepository, IGenericRepository<Course> iCourseRepository, IGenericRepository<CourseSection> iCourseSectionRepository)
+        public CourseService(IGenericRepository<CourseVedio> iCourseVedio, IMapper mapper, IGenericRepository<CoursePriceHistory> iCoursePriceHistory, IGenericRepository<Comment> iCommentRepository, IGenericRepository<StudentCourse> iStudentCourseRepository, IGenericRepository<Course> iCourseRepository, IGenericRepository<CourseSection> iCourseSectionRepository)
         {
+            _iCourseVedio = iCourseVedio;
             _mapper = mapper;
             _iCoursePriceHistory = iCoursePriceHistory;
             _iStudentCourseRepository = iStudentCourseRepository;
@@ -275,9 +278,21 @@ namespace Services
         private async Task<double> GetPrice(int Courseid) =>
              await _iCoursePriceHistory.GetQuery().Where(s => s.CourseId == Courseid && s.StartedApplyDate < DateTime.Now).OrderByDescending(s => s.StartedApplyDate).Select(s => s.Price).FirstOrDefaultAsync();
 
+        public async Task<ResultService<int>> GetTotalTimeInSeconds(int CourseId)
+        {
+            try
+            {
+
+                ResultService<int> result = new();
+                result.Result = await _iCourseVedio.GetQuery().Include(c => c.Section).Where(c => c.Section.CourseId == CourseId).SumAsync(s => s.TimeInSeconds);
+                return result;
+            }
+            catch { return ResultService<int>.GetErrorResult().SetResult(default);}
+        }
     }
     public interface ICourseService
     {
+        public Task<ResultService<int>> GetTotalTimeInSeconds(int CourseId);
         public Task<PagedList<Comment>> GetCommentsAsync(int CourseId, Paging Params);
         public Task<int> GetTeacherIdOrDefultAsync(int CourseId);
         public Task<ResultService<CourseOutput>> GetCourseInfoAsync(int Id);

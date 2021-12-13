@@ -55,7 +55,8 @@ namespace API
             services.AddAutoMapper(typeof(RatingProfile));
             // sarya 
             services.AddAutoMapper(typeof(CategoryProfile));
-            services.AddAutoMapper(typeof(CourseProfile));
+            services.AddAutoMapper(typeof(CourseProfile)); 
+            services.AddAutoMapper(typeof(VedioProfile)); 
             services.AddAutoMapper(typeof(CourseSectionProfile));
             services.AddAutoMapper(typeof(TeacherProfile));
             services.AddAutoMapper(typeof(CommentProfile));
@@ -131,7 +132,8 @@ namespace API
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<ISubCommentService, SubCommentService>();
             services.AddScoped<IStudentWatchesService, StudentWatchesService>();
-            services.AddScoped<IFavoriteCoursesService, FavoriteCoursesService>();
+            services.AddScoped<IFavoriteCoursesService, FavoriteCoursesService>(); 
+            services.AddScoped<IVedioService, VedioService>();
 
             services.AddIdentityServices(_configuration);
             #endregion

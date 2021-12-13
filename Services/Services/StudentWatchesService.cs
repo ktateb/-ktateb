@@ -13,7 +13,7 @@ using Model.Helper;
 
 namespace Services.Services
 {
-    public class StudentWatchesService:IStudentWatchesService
+    public class StudentWatchesService : IStudentWatchesService
     {
         private readonly IGenericRepository<CourseVedio> _iCourseVedioRepository;
         private readonly IGenericRepository<StudentWatchedVedio> _iWatchesRepository;
@@ -54,7 +54,7 @@ namespace Services.Services
                 if (Watched is null)
                 {
                     Watched = new() { WatchedDate = DateTime.Now, VedioId = VedioId, UsertId = User.Id };
-                    if (await CanAdd(VedioId,User)&&await _iWatchesRepository.CreateAsync(Watched))
+                    if (await CanAdd(VedioId, User) && await _iWatchesRepository.CreateAsync(Watched))
                     {
                         return result.SetResult(true).SetMessege("vedio added");
                     }
@@ -114,10 +114,12 @@ namespace Services.Services
         private Task<StudentWatchedVedio> Get(int VedioId, User User) =>
             _iWatchesRepository.GetQuery().Where(s => s.VedioId == VedioId && s.UsertId.Equals(User.Id)).FirstOrDefaultAsync();
 
-
+        public async Task<ResultService<bool>> isWatchedByMe(int vedioid, string Userid) =>
+            new ResultService<bool>().SetResult(await _iWatchesRepository.GetQuery().Where(s => s.VedioId == vedioid && s.UsertId.Equals(Userid)).AnyAsync());
     }
     public interface IStudentWatchesService
     {
+        public  Task<ResultService<bool>> isWatchedByMe(int vedioid, string Userid);
         public Task<PagedList<StudentWatchedVedio>> GetWatchedListAsync(User user, Paging Params);
 
         public Task<ResultService<bool>> AddToWatchedAsync(int VedioId, User user);

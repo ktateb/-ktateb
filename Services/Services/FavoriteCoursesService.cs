@@ -14,13 +14,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Services.Services
 {
-    public class FavoriteCoursesService:IFavoriteCoursesService
+    public class FavoriteCoursesService : IFavoriteCoursesService
     {
         private readonly IGenericRepository<Course> _iCourseRepository;
         private readonly IGenericRepository<StudentFavoriteCourse> _iFavoriteRepository;
- 
+
         public FavoriteCoursesService(IGenericRepository<Course> ICourseRepository, IGenericRepository<StudentFavoriteCourse> iFavoriteCourseRepository)
-        { 
+        {
             _iCourseRepository = ICourseRepository;
             _iFavoriteRepository = iFavoriteCourseRepository;
         }
@@ -106,13 +106,16 @@ namespace Services.Services
             }
             catch { return ResultService<bool>.GetErrorResult().SetResult(false); }
         }
+        public async Task<ResultService<bool>> isFavoriteByMe(int CourseId, string Userid) =>
+            new ResultService<bool>().SetResult(await _iFavoriteRepository.GetQuery().Where(s => s.CourseId == CourseId && s.UserId.Equals(Userid)).AnyAsync());
         private Task<StudentFavoriteCourse> Get(int CourseId, User User) =>
             _iFavoriteRepository.GetQuery().Where(s => s.CourseId == CourseId && s.UserId.Equals(User.Id)).FirstOrDefaultAsync();
 
     }
     public interface IFavoriteCoursesService
     {
-        public Task<PagedList<StudentFavoriteCourse>> GetFavoriteListAsync(User user,Paging parms);
+        public Task<ResultService<bool>> isFavoriteByMe(int CourseId, string Userid);
+        public Task<PagedList<StudentFavoriteCourse>> GetFavoriteListAsync(User user, Paging parms);
 
         public Task<ResultService<bool>> AddToFavoriteAsync(int CourseId, User user);
 

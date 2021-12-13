@@ -6,7 +6,8 @@
 obj
 bin
 *.db
-
+*.mp4
+*.jpg
 # User-specific files
 *.rsuser
 *.suo
