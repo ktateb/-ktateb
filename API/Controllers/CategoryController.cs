@@ -26,7 +26,7 @@ namespace API.Controllers
             _categoryServices = categoryServices;
         }
 
-        [HttpGet("/Tree")]
+        [HttpGet("Tree")]
         public async Task<List<CategotyTreeOutput>> Tree() =>
              await _categoryServices.GetTree();
         [HttpGet("{id}/SubCategories")]
