@@ -19,8 +19,7 @@ namespace Services.Profiles
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Name));
             
             CreateMap<Category , CategoryOutput>() 
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)) 
-                .ForMember(dest => dest.parentId, opt => opt.MapFrom(src => src.BaseCategoryID))
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.CategoryName));
         }
     }
