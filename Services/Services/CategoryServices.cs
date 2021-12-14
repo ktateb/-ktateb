@@ -191,7 +191,7 @@ namespace Services
             try
             {
                 result.Result = false;
-                if (!await _categoryrepository.IsExist(id))
+                if (!(await _categoryrepository.IsExist(id)))
                 {
                     result.ErrorField = nameof(id);
                     result.Messege = "category not found";
