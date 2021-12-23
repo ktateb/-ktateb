@@ -183,7 +183,7 @@ namespace API
             app.UseCors(x => x.WithOrigins("https://localhost:3000")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials());
+                .AllowAnyOrigin());
 
             app.UseStaticFiles();
 
