@@ -33,9 +33,12 @@ namespace Services
             Result.Id = node.Id;
             Result.ParentId = node.BaseCategoryID;
             Result.Childs = new();
-            foreach (var child in node.SubCategory)
+            if (node.SubCategory != null)
             {
-                Result.Childs.Add(DFS(child));
+                foreach (var child in node.SubCategory)
+                {
+                    Result.Childs.Add(DFS(child));
+                }
             }
             return Result;
         }
@@ -59,13 +62,11 @@ namespace Services
                 result.Code = ResultStatusCode.NotFound;
                 return result;
             }
-            result.Result = _mapper.Map<List<Category>, List<CategoryOutput>>
-            (
+            result.Result =
                 await _categoryrepository
                 .GetQuery().Where(
                     s => s.BaseCategoryID == id
-                ).ToListAsync()
-            );
+                ).Include(s => s.SubCategory).Select(s => new CategoryOutput { parentId = s.BaseCategoryID, Id = s.Id, Name = s.CategoryName, HasSub = s.SubCategory.Any() }).ToListAsync();
             if (result.Result != null && result.Result.Count != 0)
             {
                 return result;
@@ -78,7 +79,9 @@ namespace Services
         public async Task<ResultService<CategoryOutput>> GetCategoryByIdAsync(int id)
         {
             var result = new ResultService<CategoryOutput>();
-            var Category = await _categoryrepository.FindAsync(id);
+            var Category = await _categoryrepository.GetQuery().Where(
+                    s => s.Id == id
+                ).Include(s => s.SubCategory).Select(s => new CategoryOutput { parentId = s.BaseCategoryID, Id = s.Id, Name = s.CategoryName, HasSub = s.SubCategory.Any() }).FirstOrDefaultAsync(); ;
             if (Category is null)
             {
                 result.ErrorField = nameof(id);
@@ -87,13 +90,16 @@ namespace Services
                 return result;
             }
             result.Code = ResultStatusCode.Ok;
-            result.Result = _mapper.Map<Category, CategoryOutput>(Category);
+            result.Result = Category;
             return result;
         }
         public async Task<ResultService<List<CategoryOutput>>> GetTopLevelCategoriesAsync()
         {
             ResultService<List<CategoryOutput>> result = new();
-            result.Result = _mapper.Map<List<Category>, List<CategoryOutput>>(await _categoryrepository.GetQuery().Where(c => c.BaseCategoryID == null).ToListAsync());
+            result.Result = await _categoryrepository
+                .GetQuery().Where(
+                    s => s.BaseCategoryID == null
+                ).Include(s => s.SubCategory).Select(s => new CategoryOutput { parentId = s.BaseCategoryID, Id = s.Id, Name = s.CategoryName, HasSub = s.SubCategory.Any() }).ToListAsync();
             if (result.Result == null || result.Result.Count == 0)
             {
                 result.Code = ResultStatusCode.NotFound;
@@ -120,6 +126,7 @@ namespace Services
                 return result;
             }
             result.Result = _mapper.Map<Category, CategoryOutput>(child.BaseCategory);
+            result.Result.HasSub = true;
             return result;
         }
 
@@ -163,6 +170,7 @@ namespace Services
                     result.Code = ResultStatusCode.NotFound;
                     return result;
                 }
+                var HasSubTask = HaseSubCategoriesAsync(category.Id);
                 if (category.ParentId != null && !(await _categoryrepository.IsExist(category.ParentId ?? 0)))
                 {
                     result.ErrorField = nameof(category.ParentId);
@@ -174,6 +182,7 @@ namespace Services
                 if (await _categoryrepository.UpdateAsync(CategoryToUpdate))
                 {
                     result.Result = _mapper.Map<Category, CategoryOutput>(CategoryToUpdate);
+                    result.Result.HasSub = await HasSubTask;
                     return result;
                 }
                 result.Messege = "Category Not Added";
@@ -255,7 +264,7 @@ namespace Services
     }
     public interface ICategoryServices
     {
-        public  Task<List<CategotyTreeOutput>> GetTree();
+        public Task<List<CategotyTreeOutput>> GetTree();
         public Task<ResultService<CategoryOutput>> GetCategoryByIdAsync(int id);
         public Task<ResultService<CategoryOutput>> CreateNewCategoryAsync(CategoryCreateInput category);
         public Task<ResultService<bool>> DeletCategoryAsync(int id);
