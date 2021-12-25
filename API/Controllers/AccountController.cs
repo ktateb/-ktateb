@@ -107,12 +107,13 @@ namespace API.Controllers
             if (file == null)
                 return BadRequest("Please add photo to your product.");
             var path = Path.Combine("wwwroot/images/", "ProfilePhotoFor" + user.UserName + "_" + file.FileName);
+            var oldPath = "wwwroot/" + user.PictureUrl;
+            if (System.IO.File.Exists(oldPath))
+                System.IO.File.Delete(oldPath);
             var stream = new FileStream(path, FileMode.Create);
             await file.CopyToAsync(stream);
             await stream.DisposeAsync();
             user.PictureUrl = path[7..];
-            if (System.IO.File.Exists(path))
-                System.IO.File.Delete(path);
             await _accountService.UpdateUser(user);
             return Ok("Done");
         }

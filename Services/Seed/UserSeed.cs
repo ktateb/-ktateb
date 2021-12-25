@@ -9,6 +9,7 @@ using DAL.Entities.Identity;
 using DAL.Entities.Identity.enums;
 using Microsoft.AspNetCore.Identity;
 using Model.User.Outputs;
+using Services.Seed.GenerateDummyData;
 
 namespace Services.Seed
 {
@@ -25,7 +26,7 @@ namespace Services.Seed
                     var userForAdd = new User
                     {
                         Birthday = DateTime.UtcNow,
-                        Gender = Gender.Male    ,
+                        Gender = Gender.Male,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
                         Country = user.Country,
@@ -39,6 +40,15 @@ namespace Services.Seed
                     string UserName = user.UserName;
                     var dbRecord = await userManager.FindByNameAsync(UserName);
                     await userManager.AddToRoleAsync(dbRecord, "Admin");
+                }
+
+                var generatedUsers = GenerateUsers.AddUsers();
+                foreach (var user in generatedUsers)
+                {
+                    await userManager.CreateAsync(user, "123@Abc");
+                    string UserName = user.UserName;
+                    var dbRecord = await userManager.FindByNameAsync(UserName);
+                    await userManager.AddToRoleAsync(dbRecord, "Student");
                 }
             }
         }

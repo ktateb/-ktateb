@@ -35,6 +35,7 @@ namespace API
                     await CountrySeed.SeedCountryAsync(context);
                     await RoleSeed.SeedRoleAsync(roleManager);
                     await UserSeed.SeedUserAsync(userManager);
+                    await CategorySeed.SeedCategoryAsync(context);
                 }
                 catch (Exception e)
                 {

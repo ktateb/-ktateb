@@ -1,0 +1,78 @@
+[
+    {
+        "BaseCategoryID": 0,
+        "CategoryName": "الثانوية"
+    },
+    {
+        "BaseCategoryID": 0,
+        "CategoryName": "الاعدادية"
+    },
+    {
+        "BaseCategoryID": 0,
+        "CategoryName": "الابتدائية"
+    },
+    {
+        "BaseCategoryID": 0,
+        "CategoryName": "كورسات منوعة"
+    },
+    {
+        "BaseCategoryID": 0,
+        "CategoryName": "مؤتمرات جامعية"
+    },
+    {
+        "BaseCategoryID": 0,
+        "CategoryName": "فعاليات تدريبية"
+    },
+    {
+        "BaseCategoryID": 0,
+        "CategoryName": "ورشات عمل"
+    },
+    {
+        "BaseCategoryID": 3,
+        "CategoryName": "الصف الاول"
+    },
+    {
+        "BaseCategoryID": 3,
+        "CategoryName": "الصف الثاني"
+    },
+    {
+        "BaseCategoryID": 3,
+        "CategoryName": "الصف الثالث"
+    },
+    {
+        "BaseCategoryID": 3,
+        "CategoryName": "الصف الرابع"
+    },
+    {
+        "BaseCategoryID": 3,
+        "CategoryName": "الصف الخامس"
+    },
+    {
+        "BaseCategoryID": 3,
+        "CategoryName": "الصف السادس"
+    },
+    {
+        "BaseCategoryID": 2,
+        "CategoryName": "الصف السابع"
+    },
+    {
+        "BaseCategoryID": 2,
+        "CategoryName": "الصف الثامن"
+    },
+    {
+        "BaseCategoryID": 2,
+        "CategoryName": "الصف التاسع"
+    },
+    {
+        "BaseCategoryID": 1,
+        "CategoryName": "الصف العاشر"
+    },
+    {
+        "BaseCategoryID": 1,
+        "CategoryName": "الصف الحادي عشر"
+    },
+    {
+        "BaseCategoryID": 1,
+        "CategoryName": "الصف الثاني عشر"
+    }
+]
