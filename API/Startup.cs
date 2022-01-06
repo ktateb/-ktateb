@@ -31,6 +31,7 @@ using DAL.Entities.Teachers;
 using DAL.Entities.StudentWatches;
 using DAL.Entities.StudentFavoriteCourses;
 using Services.Services;
+using Services.Hubs;
 
 namespace API
 {
@@ -166,6 +167,8 @@ namespace API
                 // opt.OperationFilter<AppendAuthoriziton>();
             });
             #endregion
+
+            services.AddSignalR();
             services.AddCors();
         }
 
@@ -202,6 +205,7 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/ChatSocket");
             });
         }
     }

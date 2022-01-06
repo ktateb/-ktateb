@@ -8,10 +8,12 @@ using Common.Services;
 using DAL.Entities.Messages;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Model.Helper;
 using Model.Message.Inputs;
 using Model.Message.Outputs;
 using Services;
+using Services.Hubs;
 
 namespace API.Controllers
 {
@@ -20,12 +22,14 @@ namespace API.Controllers
     {
         private readonly IMessageService _messageRepository;
         private readonly IAccountService _accountService;
+        private readonly IHubContext<ChatHub> _chatHub;
         private readonly IMapper _mapper;
 
-        public MessageController(IMapper mapper, IMessageService messageRepository, IAccountService accountService)
+        public MessageController(IMapper mapper, IHubContext<ChatHub> chatHub, IMessageService messageRepository, IAccountService accountService)
         {
             _messageRepository = messageRepository;
             _accountService = accountService;
+            _chatHub = chatHub;
             _mapper = mapper;
         }
 
@@ -56,11 +60,17 @@ namespace API.Controllers
 
 
         [HttpPost("Update")]
-        public async Task<ActionResult<ResultService<bool>>> UpdateMessage(UpdateMessageInput input) =>
-            GetResult(await _messageRepository.UpdateMessage(input, await _accountService.GetUserByUserClaim(HttpContext.User)));
+        public async Task<ActionResult<ResultService<bool>>> UpdateMessage(UpdateMessageInput input)
+        {
+            await _chatHub.Clients.All.SendAsync("ReceiverOne", input.ReciverId, input.Text);
+            return GetResult(await _messageRepository.UpdateMessage(input, await _accountService.GetUserByUserClaim(HttpContext.User)));
+        }
 
         [HttpPost("SendMessage")]
-        public async Task<ActionResult<ResultService<bool>>> SendMessage(MessageInput input) =>
-            GetResult(await _messageRepository.SendMessage(input, await _accountService.GetUserByUserClaim(HttpContext.User)));
+        public async Task<ActionResult<ResultService<bool>>> SendMessage(MessageInput input)
+        {
+            await _chatHub.Clients.All.SendAsync("ReceiverOne", input.ReciverId, input.Text);
+            return GetResult(await _messageRepository.SendMessage(input, await _accountService.GetUserByUserClaim(HttpContext.User)));
+        }
     }
 }

@@ -75,7 +75,7 @@ namespace API.Controllers
         }
 
         // need pagination
-        [HttpGet("Users")]
+        [HttpGet("Users") , AllowAnonymous]
         public async Task<ActionResult<List<UsersOutput>>> GetUsers() =>
             Ok(_mapper.Map<List<User>, List<UsersOutput>>(await _dashboardService.GetUsers()));
 
